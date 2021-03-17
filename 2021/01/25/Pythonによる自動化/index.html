@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  #<!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/Jorey-s-Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Jorey-s-Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Jorey-s-Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Jorey-s-Blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/Jorey-s-Blog/css/main.css">
+
+
+<link rel="stylesheet" href="/Jorey-s-Blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/Jorey-s-Blog/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":true,"dimmer":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="一、複数のcsvをExcelのSheetに保存する1.目的   同じフォルダ内のcsvファイルに情報を追加し、合併するフォルダごとの情報を一枚のExcel表にシートごとにまとめる    2.事前説明 ①使ったモジュール  12345import osimport pandas as pdimport datetimeimport py7zrimport openpyxl  ②データ構造  1_">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pythonによる自動化">
+<meta property="og:url" content="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/index.html">
+<meta property="og:site_name" content="LittleVoice-g-string">
+<meta property="og:description" content="一、複数のcsvをExcelのSheetに保存する1.目的   同じフォルダ内のcsvファイルに情報を追加し、合併するフォルダごとの情報を一枚のExcel表にシートごとにまとめる    2.事前説明 ①使ったモジュール  12345import osimport pandas as pdimport datetimeimport py7zrimport openpyxl  ②データ構造  1_">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/result.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/datas_tmp.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/%E5%9B%9B-1.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/%E5%9B%9B-2.png">
+<meta property="article:published_time" content="2021-01-25T08:44:09.000Z">
+<meta property="article:modified_time" content="2021-02-03T05:55:45.555Z">
+<meta property="article:author" content="Jorey">
+<meta property="article:tag" content="Excel">
+<meta property="article:tag" content="自動化">
+<meta property="article:tag" content="ファイル操作">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/result.png">
+
+<link rel="canonical" href="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Pythonによる自動化 | LittleVoice-g-string</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Jorey-s-Blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LittleVoice-g-string</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">苦しむために生きないであなた自身を愛してくれ</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/Jorey-s-Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/Jorey-s-Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/Jorey-s-Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/Jorey-s-Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Jorey-s-Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Jorey">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LittleVoice-g-string">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Pythonによる自動化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-25 17:44:09" itemprop="dateCreated datePublished" datetime="2021-01-25T17:44:09+09:00">2021-01-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-02-03 14:55:45" itemprop="dateModified" datetime="2021-02-03T14:55:45+09:00">2021-02-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/Jorey-s-Blog/categories/python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">pythonによる自動化</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>4.7k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>4 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!-- toc -->
+<hr>
+<h2 id="一、複数のcsvをExcelのSheetに保存する"><a href="#一、複数のcsvをExcelのSheetに保存する" class="headerlink" title="一、複数のcsvをExcelのSheetに保存する"></a>一、複数のcsvをExcelのSheetに保存する</h2><h3 id="1-目的"><a href="#1-目的" class="headerlink" title="1.目的"></a>1.目的</h3><font size=3>
+
+<blockquote>
+<p>同じフォルダ内のcsvファイルに情報を追加し、合併する<br>フォルダごとの情報を一枚のExcel表にシートごとにまとめる</p>
+</blockquote>
+</font>
+
+<h3 id="2-事前説明"><a href="#2-事前説明" class="headerlink" title="2.事前説明"></a>2.事前説明</h3><blockquote>
+<p>①使ったモジュール</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">import os</span><br><span class="line">import pandas as pd</span><br><span class="line">import datetime</span><br><span class="line">import py7zr</span><br><span class="line">import openpyxl</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>②データ構造</p>
+<blockquote>
+<p>1_毎日同じ構造のデータが生成すると想定する</p>
+</blockquote>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">20200701.7z</span><br><span class="line">▲フォルダ1</span><br><span class="line">	■csvファイル1</span><br><span class="line">	■csvファイル2</span><br><span class="line">▲フォルダ2</span><br><span class="line">	■csvファイル1</span><br><span class="line">	■csvファイル2</span><br><span class="line">▲フォルダ3</span><br><span class="line">	■csvファイル1</span><br><span class="line">	■csvファイル2</span><br></pre></td></tr></table></figure>
+<blockquote>
+<blockquote>
+<p>2_元データの中身</p>
+</blockquote>
+</blockquote>
+<a id="more"></a>
+<hr>
+<table>
+<tr><th>20200701.csv</th><th>log_20200701.csv</th></tr>
+<tr><td>
+
+<table>
+<thead>
+<tr>
+<th>開始時間</th>
+<th>サイズ(Byte)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2020/7/1  0:02:00</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2020/7/1  0:06:00</td>
+<td>32567889</td>
+</tr>
+<tr>
+<td>2020/7/1  0:08:00</td>
+<td>17869027</td>
+</tr>
+<tr>
+<td>2020/7/1  0:10:00</td>
+<td>3170165999</td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+</tr>
+</tbody></table>
+</td><td>
+
+<table>
+<thead>
+<tr>
+<th>開始</th>
+<th>処理時間</th>
+<th>件数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2020/7/1  0:02:00</td>
+<td>0:00:00</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2020/7/1  0:06:00</td>
+<td>02:27.1</td>
+<td>32</td>
+</tr>
+<tr>
+<td>2020/7/1  0:08:00</td>
+<td>02:04.0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2020/7/1  0:10:00</td>
+<td>0:00:00</td>
+<td>-20</td>
+</tr>
+</tbody></table>
+</td></tr> </table>
+
+<blockquote>
+<blockquote>
+<p>3_希望結果</p>
+</blockquote>
+</blockquote>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/result.png" class="" title="result"></div>
+
+<h3 id="3-解凍"><a href="#3-解凍" class="headerlink" title="3.解凍"></a>3.解凍</h3><font size=3>
+
+<blockquote>
+<p>①圧縮されたデータを解凍する</p>
+</blockquote>
+</font>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">zipfilename &#x3D; &#39;.&#x2F;20200701.7z&#39;</span><br><span class="line">files &#x3D; py7zr.SevenZipFile(zipfilename,&#39;r&#39;)</span><br><span class="line">files.extractall(path &#x3D; ｒ&#39;&#39;) #ここ解凍後フォルダのpathを空白にすれば、余計なディレクトリを生成しなくても済む</span><br><span class="line">files.close()</span><br></pre></td></tr></table></figure>
+<font size=3>
+
+<blockquote>
+<p>②解凍後フォルダ内のパスをリストに格納する</p>
+</blockquote>
+</font>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">path &#x3D; zipfilename[2:10]</span><br><span class="line">def read_file(path):</span><br><span class="line">    mm &#x3D; [m for m,k,w in os.walk(path)]</span><br><span class="line">    kk &#x3D; [k for m,k,w in os.walk(path)]</span><br><span class="line">    ww &#x3D; [w for m,k,w in os.walk(path)]</span><br><span class="line">    file_path_1 &#x3D; []</span><br><span class="line">    file_path_2 &#x3D; []</span><br><span class="line">    for i in range(1,len(mm)):</span><br><span class="line">        path_1 &#x3D; mm[i] + &#39;&#x2F;&#39; + ww[i][0]</span><br><span class="line">        path_2 &#x3D; mm[i] + &#39;&#x2F;&#39; + ww[i][1]</span><br><span class="line">        file_path_1.append(path_1)</span><br><span class="line">        file_path_2.append(path_2)</span><br><span class="line">    return file_path_1,file_path_2</span><br></pre></td></tr></table></figure>
+<h3 id="4-csvの操作"><a href="#4-csvの操作" class="headerlink" title="4.csvの操作"></a>4.csvの操作</h3><font size=3>
+
+<blockquote>
+<p>①ファイルを読み込み、「件数」列は-20に等しい行を削除</p>
+</blockquote>
+</font>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">def make_dataframe(file_path_1,file_path_2):</span><br><span class="line">    df_1 &#x3D; [pd.read_csv(file_path_1[k],encoding&#x3D;&#39;cp932&#39;) for k in range(len(file_path_1))]</span><br><span class="line">    df_2 &#x3D; [pd.read_csv(file_path_2[k],encoding&#x3D;&#39;cp932&#39;) for k in range(len(file_path_2))]</span><br><span class="line">    df_2 &#x3D; [k[k[&#39;件数&#39;] !&#x3D; -20].reset_index() for k in df_2]</span><br><span class="line">    df_2 &#x3D; [k.loc[:,[&#39;開始&#39;,&#39;処理時間&#39;,&#39;件数&#39;]] for k in df_2]</span><br><span class="line">    return df_1,df_2</span><br></pre></td></tr></table></figure>
+<font size=3>
+
+<blockquote>
+<p>②読み込んだ２つのdataframeを合併する<br>③サイズ(Byte)列の値をサイズ(MB)に換算する<br>④文字列である「処理時間」列をdatetime.time型(hour,minute,second)のデータに変える<br>⑤second単位に統一し、sumを求めたら、datetime型に戻らせる<br>⑥諸々の集計結果を最後の一行に追加しておく</p>
+</blockquote>
+</font>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">def make_file(df_1,df_2):</span><br><span class="line">    df &#x3D; pd.concat([df_2,df_1],axis&#x3D;1)</span><br><span class="line">    df[&#39;サイズ(MB)&#39;] &#x3D; df[&#39;サイズ(Byte)&#39;]&#x2F;(1024**2)</span><br><span class="line">    </span><br><span class="line">    ii &#x3D; [pd.to_datetime(i).time() for i in df_2[&#39;処理時間&#39;]]</span><br><span class="line">    time_to_second &#x3D; []</span><br><span class="line">    for i in ii:</span><br><span class="line">        if i.microsecond: #i.microsecond:int型</span><br><span class="line">            s &#x3D; &#39;%06d&#39; % i.microsecond　#int型を文字列に変更する際、頭の0をなくさないようにする</span><br><span class="line">            if int(s[0]) &gt;&#x3D; 5:</span><br><span class="line">                seconds &#x3D; i.hour*3600 + i.minute*60+ i.second +1</span><br><span class="line">                time_to_second.append(seconds)</span><br><span class="line">            else:</span><br><span class="line">                seconds &#x3D; i.hour*3600 + i.minute*60+ i.second</span><br><span class="line">                time_to_second.append(seconds)</span><br><span class="line">        else:</span><br><span class="line">            seconds &#x3D; i.hour*3600 + i.minute*60+ i.second</span><br><span class="line">            time_to_second.append(seconds)</span><br><span class="line">    m,s &#x3D; divmod(sum(time_to_second),60)</span><br><span class="line">    h,m &#x3D; divmod(m,60)</span><br><span class="line">    sum_time&#x3D;&#39;&#123;0&#125;:&#123;1:02d&#125;:&#123;2:02d&#125;&#39;.format(h,m,s)</span><br><span class="line">    </span><br><span class="line">    sum_num &#x3D; sum(df[&#39;件数&#39;])</span><br><span class="line">    sum_size &#x3D; sum(df[&#39;サイズ(Byte)&#39;])</span><br><span class="line">    sum_size_MB &#x3D; sum_size&#x2F;(1024**2)</span><br><span class="line">    </span><br><span class="line">    df.loc[&#39;sum&#39;] &#x3D; [&#39;&#39;,sum_time,sum_num,sum_size&#x2F;1024**3,sum_size,sum_size_MB]</span><br><span class="line">    </span><br><span class="line">    return df</span><br></pre></td></tr></table></figure>
+<h3 id="5-excelに書き込む"><a href="#5-excelに書き込む" class="headerlink" title="5.excelに書き込む"></a>5.excelに書き込む</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def combine_to_excel(list_file_1,list_file_2,list_file_3):</span><br><span class="line">    list_name &#x3D; [&#39;list_file_1&#39;,&#39;list_file_2&#39;,&#39;list_file_3&#39;]</span><br><span class="line">    writer &#x3D; pd.ExcelWriter(&#39;20200701.xlsx&#39;)</span><br><span class="line">    for i in list_name:</span><br><span class="line">        eval(i).to_excel(excel_writer &#x3D; writer,sheet_name &#x3D; i,index&#x3D;False)</span><br><span class="line">    writer.save()</span><br><span class="line">    writer.close()</span><br></pre></td></tr></table></figure>
+<h3 id="6-残り課題"><a href="#6-残り課題" class="headerlink" title="6.残り課題"></a>6.残り課題</h3><blockquote>
+<p>pyファイルに変えておきたい。</p>
+</blockquote>
+<h2 id="二、2つのフォルダに差になったファイルを新しいフォルダにコピーする"><a href="#二、2つのフォルダに差になったファイルを新しいフォルダにコピーする" class="headerlink" title="二、2つのフォルダに差になったファイルを新しいフォルダにコピーする"></a>二、2つのフォルダに差になったファイルを新しいフォルダにコピーする</h2><h3 id="1-差になったファイルを探し出す"><a href="#1-差になったファイルを探し出す" class="headerlink" title="1.差になったファイルを探し出す"></a>1.差になったファイルを探し出す</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import os</span><br><span class="line">from shutil import copy</span><br><span class="line"></span><br><span class="line">ll&#x3D;[l for l,m,n in os.walk(&#39;.&#x2F;&#39;)]</span><br><span class="line">nn &#x3D; [n for l,m,n in os.walk(&#39;.&#x2F;&#39;)]</span><br><span class="line"></span><br><span class="line">#多めにあるフォルダを判定</span><br><span class="line">len(nn[2]) &gt; len(nn[3])</span><br><span class="line">#差になったファイルを判定</span><br><span class="line">file &#x3D; [i for i in nn[2] if i not in nn[3]]</span><br><span class="line">#差になったファイルのパスをつける</span><br><span class="line">path&#x3D;[ll[2]+&#39;&#x2F;&#39;+i for i in file]</span><br></pre></td></tr></table></figure>
+<h3 id="2-新しいフォルダにコピー"><a href="#2-新しいフォルダにコピー" class="headerlink" title="2.新しいフォルダにコピー"></a>2.新しいフォルダにコピー</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">save_dir &#x3D; &#39;.&#x2F;data_new&#39;</span><br><span class="line">if not os.path.isdir(save_dir):</span><br><span class="line">    os.makedirs(save_dir)</span><br><span class="line">for i in range(len(path)):</span><br><span class="line">    copy(path[i],save_dir) </span><br></pre></td></tr></table></figure>
+<h2 id="三、フォルダ内のファイルを一括に読み込み、特定のファイルのみ結合する"><a href="#三、フォルダ内のファイルを一括に読み込み、特定のファイルのみ結合する" class="headerlink" title="三、フォルダ内のファイルを一括に読み込み、特定のファイルのみ結合する"></a>三、フォルダ内のファイルを一括に読み込み、特定のファイルのみ結合する</h2><h3 id="1-ファイルを一括に読み込み"><a href="#1-ファイルを一括に読み込み" class="headerlink" title="1.ファイルを一括に読み込み"></a>1.ファイルを一括に読み込み</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import pandas as pd</span><br><span class="line">import os</span><br><span class="line">import numpy as np</span><br><span class="line"></span><br><span class="line">datas &#x3D; []</span><br><span class="line">for info in os.listdir(&quot;フォルダのパス&quot;):</span><br><span class="line">    domain &#x3D; os.path.abspath(r&quot;フォルダのパス&quot;)</span><br><span class="line">    info &#x3D; os.path.join(domain,info)</span><br><span class="line">    data &#x3D; pd.read_csv(info,encoding &#x3D;&#39;cp932&#39;)</span><br><span class="line">    datas.append(data)</span><br></pre></td></tr></table></figure>
+<h3 id="2-特定のファイルのみ結合"><a href="#2-特定のファイルのみ結合" class="headerlink" title="2.特定のファイルのみ結合"></a>2.特定のファイルのみ結合</h3><blockquote>
+<p>indexで指定する</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">datas_tmp &#x3D; []</span><br><span class="line">for i in range(len(datas)):</span><br><span class="line">    datas_tmp.append(datas[:i] + datas[i+1:])</span><br></pre></td></tr></table></figure>
+<div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/datas_tmp.png" class="" title="datas_tmp"></div>
+
+<h2 id="四、フラグつけ"><a href="#四、フラグつけ" class="headerlink" title="四、フラグつけ"></a>四、フラグつけ</h2><blockquote>
+<p>あるデータ群に対してランダムに10件HOTフラグに付け、残りは全部NOTフラグにつける<br>上記のdatas_tmpをもとに実行する</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">df&#x3D;pd.concat(datas_tmp[2])</span><br><span class="line">data2&#x3D;np.random.randint(3,100,(100,3))</span><br><span class="line">df_data2&#x3D;pd.DataFrame(data2,columns&#x3D;[&#39;挿入&#39;,&#39;公式&#39;,&#39;データ&#39;])</span><br><span class="line">df_data2</span><br><span class="line">ddf&#x3D;pd.concat([df.reset_index()[[&#39;挿入&#39;,&#39;公式&#39;,&#39;データ&#39;]],df_data2],axis&#x3D;0)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>ddfを今回フラグつけてあげたいデータとする</p>
+</blockquote>
+<div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/%E5%9B%9B-1.png" class="" title="四-1"></div>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import random</span><br><span class="line">num&#x3D;92</span><br><span class="line">list_not&#x3D;[0]*num</span><br><span class="line">num_hot&#x3D;10</span><br><span class="line">list_hot&#x3D;[1]*num_hot</span><br><span class="line"></span><br><span class="line">list_all&#x3D;list_not+list_hot</span><br><span class="line">random.shuffle(list_all)</span><br><span class="line"></span><br><span class="line">ddf[&#39;HOT&#39;]&#x3D;list_all</span><br><span class="line">ddf.loc[ddf[&#39;HOT&#39;]&#x3D;&#x3D;1,&#39;NOT&#39;]&#x3D;0</span><br><span class="line">ddf.loc[ddf[&#39;HOT&#39;]&#x3D;&#x3D;0,&#39;NOT&#39;]&#x3D;1</span><br></pre></td></tr></table></figure>
+<div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/%E5%9B%9B-2.png" class="" title="四-2"></div>
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://twitter.com/joreyooooolo">
+            <span class="icon">
+              <i class="fab fa-twitter"></i>
+            </span>
+
+            <span class="label">Twitter</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Jorey-s-Blog/tags/Excel/" rel="tag"># Excel</a>
+              <a href="/Jorey-s-Blog/tags/%E8%87%AA%E5%8B%95%E5%8C%96/" rel="tag"># 自動化</a>
+              <a href="/Jorey-s-Blog/tags/%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E6%93%8D%E4%BD%9C/" rel="tag"># ファイル操作</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/" rel="prev" title="Windows環境上のAnacondaにMecabのユーザー辞書とNEologd辞書のインストール">
+      <i class="fa fa-chevron-left"></i> Windows環境上のAnacondaにMecabのユーザー辞書とNEologd辞書のインストール
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Jorey-s-Blog/2021/02/03/markdown%E8%A8%98%E6%B3%95/" rel="next" title="markdown記法">
+      markdown記法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1EphGUoLq3zryN" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E8%A4%87%E6%95%B0%E3%81%AEcsv%E3%82%92Excel%E3%81%AESheet%E3%81%AB%E4%BF%9D%E5%AD%98%E3%81%99%E3%82%8B"><span class="nav-text">一、複数のcsvをExcelのSheetに保存する</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%9B%AE%E7%9A%84"><span class="nav-text">1.目的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BA%8B%E5%89%8D%E8%AA%AC%E6%98%8E"><span class="nav-text">2.事前説明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%A7%A3%E5%87%8D"><span class="nav-text">3.解凍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-csv%E3%81%AE%E6%93%8D%E4%BD%9C"><span class="nav-text">4.csvの操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-excel%E3%81%AB%E6%9B%B8%E3%81%8D%E8%BE%BC%E3%82%80"><span class="nav-text">5.excelに書き込む</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%AE%8B%E3%82%8A%E8%AA%B2%E9%A1%8C"><span class="nav-text">6.残り課題</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%812%E3%81%A4%E3%81%AE%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AB%E5%B7%AE%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%9F%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E6%96%B0%E3%81%97%E3%81%84%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AB%E3%82%B3%E3%83%94%E3%83%BC%E3%81%99%E3%82%8B"><span class="nav-text">二、2つのフォルダに差になったファイルを新しいフォルダにコピーする</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B7%AE%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%9F%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E6%8E%A2%E3%81%97%E5%87%BA%E3%81%99"><span class="nav-text">1.差になったファイルを探し出す</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%96%B0%E3%81%97%E3%81%84%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AB%E3%82%B3%E3%83%94%E3%83%BC"><span class="nav-text">2.新しいフォルダにコピー</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E5%86%85%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E4%B8%80%E6%8B%AC%E3%81%AB%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF%E3%80%81%E7%89%B9%E5%AE%9A%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E3%81%BF%E7%B5%90%E5%90%88%E3%81%99%E3%82%8B"><span class="nav-text">三、フォルダ内のファイルを一括に読み込み、特定のファイルのみ結合する</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E4%B8%80%E6%8B%AC%E3%81%AB%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF"><span class="nav-text">1.ファイルを一括に読み込み</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%89%B9%E5%AE%9A%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E3%81%BF%E7%B5%90%E5%90%88"><span class="nav-text">2.特定のファイルのみ結合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E3%83%95%E3%83%A9%E3%82%B0%E3%81%A4%E3%81%91"><span class="nav-text">四、フラグつけ</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jorey"
+      src="/Jorey-s-Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jorey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/Jorey-s-Blog/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/Jorey-s-Blog/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/Jorey-s-Blog/tags/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/7546836811" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;7546836811" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/joreyooooolo" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;joreyooooolo" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jorey</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">Symbols count total: </span>
+    <span title="Symbols count total">67k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    <span title="Reading time total">1:01</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/Jorey-s-Blog/lib/anime.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/pjax/pjax.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/velocity/velocity.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/Jorey-s-Blog/js/utils.js"></script>
+
+<script src="/Jorey-s-Blog/js/motion.js"></script>
+
+
+<script src="/Jorey-s-Blog/js/schemes/muse.js"></script>
+
+
+<script src="/Jorey-s-Blog/js/next-boot.js"></script>
+
+<script src="/Jorey-s-Blog/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

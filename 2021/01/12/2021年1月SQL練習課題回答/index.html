@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  #<!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/Jorey-s-Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Jorey-s-Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Jorey-s-Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Jorey-s-Blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/Jorey-s-Blog/css/main.css">
+
+
+<link rel="stylesheet" href="/Jorey-s-Blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/Jorey-s-Blog/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":true,"dimmer":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="説明：SQLの操作はpsycopg2を使って、Python上での操作を行いました。   1.2021年1月12日 勉強したSQL構文:  OVER(PARTITION BY column1 ORDER BY column2)   ①データ挿入 %%sql CREATE TABLE T0104(     ID INT,     NAME VARCHAR(10),     NUM INT) INSER">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2021年1月SQL練習課題回答">
+<meta property="og:url" content="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/index.html">
+<meta property="og:site_name" content="LittleVoice-g-string">
+<meta property="og:description" content="説明：SQLの操作はpsycopg2を使って、Python上での操作を行いました。   1.2021年1月12日 勉強したSQL構文:  OVER(PARTITION BY column1 ORDER BY column2)   ①データ挿入 %%sql CREATE TABLE T0104(     ID INT,     NAME VARCHAR(10),     NUM INT) INSER">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20200104_1.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20200104_2.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210113_1.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210113_2.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210116.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210117_1.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210117_2.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210117_3.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210121_1.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210121_2.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210125_1.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210125_2.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210125_3.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210125_4.png">
+<meta property="article:published_time" content="2021-01-12T06:35:42.000Z">
+<meta property="article:modified_time" content="2021-02-03T02:44:12.495Z">
+<meta property="article:author" content="Jorey">
+<meta property="article:tag" content="sql">
+<meta property="article:tag" content="回答">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20200104_1.png">
+
+<link rel="canonical" href="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>2021年1月SQL練習課題回答 | LittleVoice-g-string</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Jorey-s-Blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LittleVoice-g-string</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">苦しむために生きないであなた自身を愛してくれ</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/Jorey-s-Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/Jorey-s-Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/Jorey-s-Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/Jorey-s-Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Jorey-s-Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Jorey">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LittleVoice-g-string">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2021年1月SQL練習課題回答
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-12 15:35:42" itemprop="dateCreated datePublished" datetime="2021-01-12T15:35:42+09:00">2021-01-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-02-03 11:44:12" itemprop="dateModified" datetime="2021-02-03T11:44:12+09:00">2021-02-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/Jorey-s-Blog/categories/sql/" itemprop="url" rel="index"><span itemprop="name">sql</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>5.9k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>5 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>説明：SQLの操作はpsycopg2を使って、Python上での操作を行いました。</p>
+<!-- toc -->
+<hr>
+<h3 id="1-2021年1月12日"><a href="#1-2021年1月12日" class="headerlink" title="1.2021年1月12日"></a>1.2021年1月12日</h3><blockquote>
+<p>勉強したSQL構文:</p>
+<blockquote>
+<p>OVER(PARTITION BY column1 ORDER BY column2)</p>
+</blockquote>
+</blockquote>
+<p><font size=3>①データ挿入</font></p>
+<pre><code>%%sql
+CREATE TABLE T0104(
+    ID INT,
+    NAME VARCHAR(10),
+    NUM INT)
+INSERT INTO T0104 VALUES(1,&#39;A&#39;,1);
+INSERT INTO T0104 VALUES(2,&#39;A&#39;,2);
+INSERT INTO T0104 VALUES(3,&#39;A&#39;,6);
+INSERT INTO T0104 VALUES(4,&#39;A&#39;,4);
+INSERT INTO T0104 VALUES(5,&#39;A&#39;,3);
+INSERT INTO T0104 VALUES(6,&#39;B&#39;,2);
+INSERT INTO T0104 VALUES(7,&#39;B&#39;,8);
+INSERT INTO T0104 VALUES(8,&#39;B&#39;,2);</code></pre>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20200104_1.png" class="" title="20200104_1"></div>
+<a id="more"></a>
+<font size=3>②条件を設定し、データを絞り込む</font>
+
+<pre><code>%%sql
+
+select A.id,A.name,A.num from(
+select T.ID,T.NAME,T.NUM,
+sum(NUM) OVER(PARTITION BY NAME ORDER BY ID)*1.0 a,
+sum(NUM) OVER(PARTITION BY NAME ORDER BY ID) *1.0 b,
+sum(NUM) OVER(PARTITION BY NAME)*1.0 c from T0104 as T
+) A
+where A.a/A.c &gt; 0.6;</code></pre>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20200104_2.png" class="" title="20200104_2"></div>
+
+<h3 id="2-2021年1月13日"><a href="#2-2021年1月13日" class="headerlink" title="2.2021年1月13日"></a>2.2021年1月13日</h3><blockquote>
+<p>勉強したSQL構文:</p>
+<blockquote>
+<p>1.column1をもとに分割し、column2をもとにそれぞれ順番そろえて、順位を新しい列につけて行く</p>
+<blockquote>
+<p>row_number() over(partion column1 order by column2)</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>2.coalesce関数</p>
+<blockquote>
+<p>coalesce(A,B,C…):()の中に一つの非NULLの値が出力される<br>参考記事:<a target="_blank" rel="noopener" href="https://qiita.com/sfp_waterwalker/items/acc7f95f6ab5aa5412f3">CASE式で条件分岐をSQL文に任せる</a></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<p>3.条件分岐構文:検索case式</p>
+</blockquote>
+</blockquote>
+<pre><code>case 
+    when column1 = &#39;&#39; then 結果1
+    when column1 = &#39;&#39; then 結果2
+    else ●●
+END</code></pre>
+<p><font size=3>①まず条件分岐で正負の検索結果をつけていき、コードごとに順番並ぶ</font></p>
+<pre><code>%%sql
+SELECT *,
+case when 金額相違値 &gt;= 0 then &#39;正&#39;
+    when 金額相違値 &lt; 0 then &#39;負&#39;
+        else &#39;&#39; end as 増長方向,
+        row_number() over(partition by コード order by 日付) rn from T0113</code></pre>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210113_1.png" class="" title="20210113_1"></div>
+　
+<font size=3>②上記結果をまるごとuにし、a,bという名をつけて、同じコード & bのrn列はaのrnより値が低い & 増長方向が変更した節点という三つ条件が満足した行を絞り込み、降順した第一行目を抽出する</font>
+
+<pre><code>%%sql
+select b.rn from u b
+where b.コード = a.コード
+and b.rn&lt;a.rn
+and b.増長方向 != a.増長方向
+order by b.rn desc limit 1</code></pre>
+<p><font size=3>③上記条件を満足されない行に関しては、null値になるので、coalesce関数でnull値を0に変更し、aのrn行と引き算を行い、連続増長日数という新しい一列にする。</font></p>
+<pre><code>select 日付,コード,金額,金額相違値,増長方向,
+a.rn - coalesce((select b.rn from u b
+                where b.コード = a.コード
+                and b.rn&lt;a.rn
+                and b.増長方向 != a.増長方向
+                order by b.rn desc limit 1),0) &quot;連続増長日数&quot; from u a                   </code></pre>
+<p><font size=3>④完成版と結果は以下の通り</font>           </p>
+<pre><code>%%sql
+with u as
+(SELECT *,
+case when 金額相違値 &gt;= 0 then &#39;正&#39;
+    when 金額相違値 &lt; 0 then &#39;負&#39;
+        else &#39;&#39; end as 増長方向,
+        row_number() over(partition by コード order by 日付) rn 
+ from T0113)
+select 日付,コード,金額,金額相違値,増長方向,
+    a.rn - coalesce((select b.rn from u b
+                    where b.コード = a.コード
+                    and b.rn&lt;a.rn
+                    and b.増長方向 != a.増長方向
+                    order by b.rn desc limit 1),0) &quot;連続増長日数&quot; from u a</code></pre>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210113_2.png" class="" title="20210113_2"></div>    
+
+<h3 id="3-2021年1月16日"><a href="#3-2021年1月16日" class="headerlink" title="3.2021年1月16日"></a>3.2021年1月16日</h3><pre><code>select 商品,日付,sum(単価*個数)/sum(個数) as 平均単価 
+from (select *, 
+dense_rank() OVER(PARTITION BY 商品 ORDER BY 日付) from T0116)as a
+where dense_rank = 1
+group by 商品,日付;</code></pre>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210116.png" class="" width="20210116"></div>
+
+<h3 id="4-2021年1月17日"><a href="#4-2021年1月17日" class="headerlink" title="4.2021年1月17日"></a>4.2021年1月17日</h3><blockquote>
+<p>勉強したSQL構文:</p>
+<blockquote>
+<p>CONCATを使って、数字型と文字型の結合異なるデータ型を結合したい</p>
+<blockquote>
+<p>参考記事：<a target="_blank" rel="noopener" href="https://qiita.com/Sammy_U/items/5498b93ff77d52c7e8fb">SQL 文字列結合メモ</a></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><font size=3>①まずover()関数を使ってコードごとにグループ分けを行い、順位をつける</font> </p>
+<pre><code>select *,row_number() over(PARTITION by L order by x) as m from T0117</code></pre>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210117_1.png" class="" title="20210117_1"></div>
+<font size=3>②つけた順位をもとに、さらにグループ分けを行う</font>
+
+<pre><code>select *,x-row_number() over(PARTITION by L order by x) as m from T0117 </code></pre>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210117_2.png" class="" title="20210117_2"></div>
+<font size=3>③お題の求めた通り、グループごとに最小値、最大値の間に'ー'をつける</font> 
+
+<pre><code>concat((min(x),&#39;-&#39;,max(x)))</code></pre>
+<p><font size=3>④まとめる</font></p>
+<pre><code>select l,concat(min(x),&#39;-&#39;,max(x)) as y from 
+(select *,x-row_number() over(PARTITION by L order by x) as m from T0117
+) as a
+group by l,m; </code></pre>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210117_3.png" class="" title="20210117_3"></div>
+
+<h3 id="5-2021年1月21日"><a href="#5-2021年1月21日" class="headerlink" title="5.2021年1月21日"></a>5.2021年1月21日</h3><blockquote>
+<p>勉強したSQL構文:</p>
+<blockquote>
+<p>DATEから年月のみを取得</p>
+<blockquote>
+<p>参考記事<a target="_blank" rel="noopener" href="http://vertica-tech.ashisuto.co.jp/date_trunc/">日付データを任意のフィールドで切り捨てる関数(DATE_TRUNC関数)</a></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><font size=3>①後ほど条件判定を行えるため、DATEから年月のみを取得</font></p>
+<pre><code>select *,to_char(mon,&#39;YYYY-MM&#39;) as MONTH from T0121;</code></pre>
+<div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210121_1.png" class="" title="20210121_1"></div>
+<font size=3>②同じユーザー、同じ月の行を選び出し、金額/カウントで結果得る</font>
+
+<pre><code>with u as
+(select *,to_char(mon,&#39;YYYY-MM&#39;) as MONTH from T0121)
+select id,name,month,state,amount/(select count(*) from u as b 
+                                 where a.month=b.month
+                                 and b.name = a.name) as number
+from u as a;</code></pre>
+<div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210121_2.png" class="" title="20210121_2"></div>
+
+<h3 id="6-2021年1月25日"><a href="#6-2021年1月25日" class="headerlink" title="6.2021年1月25日"></a>6.2021年1月25日</h3><blockquote>
+<p>①<a target="_blank" rel="noopener" href="https://www.postgresql.jp/document/9.4/html/functions-formatting.html">データ型書式設定関数</a></p>
+<blockquote>
+<p>postgresql:to_char([元列名], ‘YYYY-MM-DD HH24:MI’)<br>mysqlなら:date_format([元列名], ‘%Y-%m-%d %H:%i’) </p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>②join<a target="_blank" rel="noopener" href="https://www.postgresql.jp/document/9.1/html/queries-table-expressions.html">結合テーブル</a></p>
+</blockquote>
+<blockquote>
+<p><strong>③with as使いすぎるとメモリが食われやすいので、要注意</strong></p>
+</blockquote>
+<p><font size=3>①データの型をお題通りに揃える</font></p>
+<pre><code>select *,to_char(TransTime,&#39;YYYY-MM-DD HH24:MI&#39;) as TransTimed from T0125;    </code></pre>
+<div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210125_1.png" class="" title="20210125_1"></div>
+<font size=3>②後ほどのグループ分けのためopcodeごとに順位を付けていく</font>
+
+<pre><code>with u as
+(select *,to_char(TransTime,&#39;YYYY-MM-DD HH24:MI&#39;) as TransTimed from T0125)
+select *,row_number() over(PARTITION BY opcode order by transtimed) as rn from u;</code></pre>
+<div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210125_2.png" class="" title="20210125_2"></div>
+<font size=3>③次の行を一個上に持ち上げいき、それぞれのtranstimeをstarttimeとendtimeに設定する。transtypeは後ほど文字列の結合をするため、新しい列を作る。</font>
+
+<pre><code>with uu as
+(with u as
+(select *,to_char(TransTime,&#39;YYYY-MM-DD HH24:MI&#39;) as TransTimed from T0125)
+select *,row_number() over(PARTITION BY opcode order by transtimed) as rn from u)
+select a.transtype as transtype_1,b.transtype as transtype_2,a.oprseq,a.opcode,a.rn,
+a.transtimed as starttime,b.transtimed as endtime from uu as a
+    left join uu as b
+        on b.opcode=a.opcode
+            and b.rn = a.rn+1;</code></pre>
+<div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210125_3.png" class="" title="20210125_3"></div>
+<font size=3>④奇数列のみ残り(where a.rn %2!=0)、transtypeの２列を結合し、お題が求める列のみを抽出する</font>
+
+<pre><code>with result as
+
+(with uu as
+
+(with u as
+(select *,to_char(TransTime,&#39;YYYY-MM-DD HH24:MI&#39;) as TransTimed from T0125)
+
+select *,row_number() over(PARTITION BY opcode order by transtimed) as rn from u)
+
+select a.transtype as transtype_1,b.transtype as transtype_2,a.oprseq,a.opcode,a.rn,
+ a.transtimed as starttime,b.transtimed as endtime from uu as a
+     left join uu as b
+         on b.opcode=a.opcode
+         and b.rn = a.rn+1
+where a.rn %2!=0)
+
+select concat(result.transtype_1,&#39;-&#39;,result.transtype_2) as transtype,result.oprseq,result.opcode,result.starttime,result.endtime 
+from result;</code></pre>
+<div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/20210125_4.png" class="" title="20210125_4"></div>
+
+<h3 id="7-2021年1月26日"><a href="#7-2021年1月26日" class="headerlink" title="7.2021年1月26日"></a>7.2021年1月26日</h3><p><font size=3>①テーブルを作成し、データを挿入する</font></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">create table T0126A</span><br><span class="line">(id serial,</span><br><span class="line">spmc VARCHAR(100),</span><br><span class="line">分配量 NUMERIC(18,4));</span><br><span class="line"></span><br><span class="line">insert into T0126A(spmc,分配量) values</span><br><span class="line">(&#39;A&#39;,80),</span><br><span class="line">(&#39;B&#39;,100);</span><br><span class="line"></span><br><span class="line">create table T0126B</span><br><span class="line">(id serial,</span><br><span class="line">spmc VARCHAR(100),</span><br><span class="line">購入量 NUMERIC(18,4));</span><br><span class="line"></span><br><span class="line">insert into T0126B(spmc,購入量) values</span><br><span class="line">(&#39;A&#39;,20),</span><br><span class="line">(&#39;A&#39;,50),</span><br><span class="line">(&#39;A&#39;,40),</span><br><span class="line">(&#39;A&#39;,30),</span><br><span class="line">(&#39;B&#39;,120),</span><br><span class="line">(&#39;B&#39;,80),</span><br><span class="line">(&#39;B&#39;,100);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>ポイント1:<strong>serial</strong></p>
+</blockquote>
+<ul>
+<li>テーブルの列に一意の識別子を設定する簡便な表記法</li>
+<li>integer列(整数列)が作成され、その列のデフォルト値が連番整数を振り当てる</li>
+<li>PostgreSQL7.3及び以降のバージョンでは、UNIQUEまたはPRIMARY KEYにしたい場合、他のすべてのデータ型と同様に指定する必要がある</li>
+<li><u><strong>mysqlならAUTO_INCREMENT,OracleならSEQUENCE(PostgreSQLも)</strong></u>で連番を採番できる</li>
+<li>書き方</li>
+</ul>
+<pre><code>CREATE TABLE tablename(
+    columnname SERIAL);</code></pre>
+<blockquote>
+<blockquote>
+<p>参考記事:<a target="_blank" rel="noopener" href="https://www.postgresql.jp/document/7.3/user/datatype.html#DATATYPE-SERIAL">シリアルデータ型</a></p>
+</blockquote>
+</blockquote>
+<p><font size=3>②spmcごとに累計購入量を計算する</font></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">select *, (select sum(購入量) from T0126B as B</span><br><span class="line">    where B.spmc&#x3D;A.spmc</span><br><span class="line">          and B.id&lt;&#x3D; A.id) as sum_</span><br><span class="line">    from T0126B as A</span><br></pre></td></tr></table></figure>
+<div style="width:80%;margin:auto"></div>
+<font size=3>③T0126Bの累計購入量がT0126Aの総分配量より少ない場合、それまで毎回の購入量が全部分配されたと考えられる。それに反した場合、累計購入量とその回の購入量の差が総分配量より少ない場合、その回では一部の購入量が分配されたと考えられる。そうではない場合、余った部分は在庫量になる</font>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">with T as(</span><br><span class="line">    select *, (select sum(購入量) from T0126B as B</span><br><span class="line">    where B.spmc&#x3D;A.spmc</span><br><span class="line">          and B.id&lt;&#x3D; A.id) as sum_</span><br><span class="line">    from T0126B as A)</span><br><span class="line">select t.spmc,t.購入量,</span><br><span class="line">(case when T.sum_ &lt;&#x3D; U.分配量 then T.購入量 else </span><br><span class="line">     (case when (T.sum_-T.購入量)&lt;U.分配量 then U.分配量-(T.sum_-T.購入量) else 0 end)</span><br><span class="line">end) as CW</span><br><span class="line">from T</span><br><span class="line">inner join T0126A as U</span><br><span class="line">    on t.spmc&#x3D;U.spmc</span><br></pre></td></tr></table></figure>
+<p><font size=3>④列名をお題通りに変更する</font></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">with T as</span><br><span class="line">(select *, (select sum(購入量) from T0126B as B</span><br><span class="line">    where B.spmc&#x3D;A.spmc</span><br><span class="line">          and B.id&lt;&#x3D; A.id) as sum_</span><br><span class="line">    from T0126B as A),</span><br><span class="line">V as</span><br><span class="line">(select t.spmc,t.購入量,</span><br><span class="line">(case when T.sum_ &lt;&#x3D; U.分配量 then T.購入量 else </span><br><span class="line">     (case when (T.sum_-T.購入量)&lt;U.分配量 then U.分配量-(T.sum_-T.購入量) else 0 end)</span><br><span class="line">end) as CW</span><br><span class="line">from T</span><br><span class="line">inner join T0126A as U</span><br><span class="line">    on t.spmc&#x3D;U.spmc)</span><br><span class="line">select spmc,V.購入量,V.cw as 今回使用量,(V.購入量-cw) as 在庫量 from V;</span><br></pre></td></tr></table></figure>
+<div style="width:80%;margin:auto"></div>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://twitter.com/joreyooooolo">
+            <span class="icon">
+              <i class="fab fa-twitter"></i>
+            </span>
+
+            <span class="label">Twitter</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Jorey-s-Blog/tags/sql/" rel="tag"># sql</a>
+              <a href="/Jorey-s-Blog/tags/%E5%9B%9E%E7%AD%94/" rel="tag"># 回答</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/" rel="prev" title="02.羅小黒戦記の映画コメントを分析してみよう">
+      <i class="fa fa-chevron-left"></i> 02.羅小黒戦記の映画コメントを分析してみよう
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Jorey-s-Blog/2021/01/16/05_paddlehub/" rel="next" title="paddlepaddleを使って写真の背景を切り捨てる">
+      paddlepaddleを使って写真の背景を切り捨てる <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1EphGUoLq3zryN" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2021%E5%B9%B41%E6%9C%8812%E6%97%A5"><span class="nav-text">1.2021年1月12日</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2021%E5%B9%B41%E6%9C%8813%E6%97%A5"><span class="nav-text">2.2021年1月13日</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2021%E5%B9%B41%E6%9C%8816%E6%97%A5"><span class="nav-text">3.2021年1月16日</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2021%E5%B9%B41%E6%9C%8817%E6%97%A5"><span class="nav-text">4.2021年1月17日</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2021%E5%B9%B41%E6%9C%8821%E6%97%A5"><span class="nav-text">5.2021年1月21日</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2021%E5%B9%B41%E6%9C%8825%E6%97%A5"><span class="nav-text">6.2021年1月25日</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2021%E5%B9%B41%E6%9C%8826%E6%97%A5"><span class="nav-text">7.2021年1月26日</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jorey"
+      src="/Jorey-s-Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jorey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/Jorey-s-Blog/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/Jorey-s-Blog/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/Jorey-s-Blog/tags/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/7546836811" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;7546836811" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/joreyooooolo" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;joreyooooolo" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jorey</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">Symbols count total: </span>
+    <span title="Symbols count total">67k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    <span title="Reading time total">1:01</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/Jorey-s-Blog/lib/anime.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/pjax/pjax.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/velocity/velocity.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/Jorey-s-Blog/js/utils.js"></script>
+
+<script src="/Jorey-s-Blog/js/motion.js"></script>
+
+
+<script src="/Jorey-s-Blog/js/schemes/muse.js"></script>
+
+
+<script src="/Jorey-s-Blog/js/next-boot.js"></script>
+
+<script src="/Jorey-s-Blog/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  #<!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/Jorey-s-Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Jorey-s-Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Jorey-s-Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Jorey-s-Blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/Jorey-s-Blog/css/main.css">
+
+
+<link rel="stylesheet" href="/Jorey-s-Blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/Jorey-s-Blog/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":true,"dimmer":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="自分の好きなシリーズ動画である羅小黒戦記のアニメ映画版は日本で上映されたので、日本人の方からこの動画をどう見ているのかを知りたく、ネット上のコメントを取得して分析してみました。良い分析結果得られなかったですが、今回とりあえずいろいろ手法の練習にし、今後は今回の結果をもとに、チューニングと精度向上のほうに進みたいと思います。 該当映画コメントサイトはこちらです↓↓↓Filmarks羅小黒戦記 ぼ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="02.羅小黒戦記の映画コメントを分析してみよう">
+<meta property="og:url" content="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/01/08/02_luoxiaohei/index.html">
+<meta property="og:site_name" content="LittleVoice-g-string">
+<meta property="og:description" content="自分の好きなシリーズ動画である羅小黒戦記のアニメ映画版は日本で上映されたので、日本人の方からこの動画をどう見ているのかを知りたく、ネット上のコメントを取得して分析してみました。良い分析結果得られなかったですが、今回とりあえずいろいろ手法の練習にし、今後は今回の結果をもとに、チューニングと精度向上のほうに進みたいと思います。 該当映画コメントサイトはこちらです↓↓↓Filmarks羅小黒戦記 ぼ">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/lastpage_href.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/links.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/no_spoiler_allpage.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/df_no_spoiler.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/df_all_data.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/wakati.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/wc_1.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/xyaxis.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/%E3%83%86%E3%83%BC%E3%83%9E%E3%81%94%E3%81%A8%E3%81%AE%E7%B5%90%E6%9E%9C_1.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/wc_1_all.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/sentence_cut.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/%E3%83%86%E3%83%BC%E3%83%9E%E3%81%94%E3%81%A8%E3%81%AE%E7%B5%90%E6%9E%9C_2.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/wc_2_all_1.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/wc_2_all_2.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/GUI.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/dff_dict.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/texts_wakati.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/socre_singlearticle.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/score_result_2.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/score_result_4.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/score_result_5.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/score_result_6.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/score_plot.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/score_test.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/sentiment_plot_1.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/LSTM.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/LSTM_2.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/LSTM_1.png">
+<meta property="article:published_time" content="2021-01-08T08:23:39.000Z">
+<meta property="article:modified_time" content="2021-01-19T10:48:05.511Z">
+<meta property="article:author" content="Jorey">
+<meta property="article:tag" content="自然言語処理">
+<meta property="article:tag" content="クロージング">
+<meta property="article:tag" content="感情分析">
+<meta property="article:tag" content="LSTM">
+<meta property="article:tag" content="GUI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Jorey-s-Blog/2021/01/08/02_luoxiaohei/lastpage_href.png">
+
+<link rel="canonical" href="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/01/08/02_luoxiaohei/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>02.羅小黒戦記の映画コメントを分析してみよう | LittleVoice-g-string</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Jorey-s-Blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LittleVoice-g-string</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">苦しむために生きないであなた自身を愛してくれ</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/Jorey-s-Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/Jorey-s-Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/Jorey-s-Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/Jorey-s-Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/01/08/02_luoxiaohei/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Jorey-s-Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Jorey">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LittleVoice-g-string">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          02.羅小黒戦記の映画コメントを分析してみよう
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-08 17:23:39" itemprop="dateCreated datePublished" datetime="2021-01-08T17:23:39+09:00">2021-01-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-01-19 19:48:05" itemprop="dateModified" datetime="2021-01-19T19:48:05+09:00">2021-01-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/Jorey-s-Blog/categories/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">自然言語処理</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>24k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>22 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/QmfU2NMCw8k" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<p><font size=3>自分の好きなシリーズ動画である羅小黒戦記のアニメ映画版は日本で上映されたので、<br>日本人の方からこの動画をどう見ているのかを知りたく、ネット上のコメントを取得して分析してみました。<br>良い分析結果得られなかったですが、今回とりあえずいろいろ手法の練習にし、今後は今回の結果をもとに、チューニングと精度向上のほうに進みたいと思います。</font></p>
+<p><font size=3><strong>該当映画コメントサイトはこちらです↓↓↓</strong></font><br><a target="_blank" rel="noopener" href="https://filmarks.com/movies/86613"><font size=3>Filmarks羅小黒戦記 ぼくが選ぶ未来の映画情報・感想・評価</font>&gt;</a></p>
+<a id="more"></a>
+<hr>
+<!-- toc -->
+<hr>
+<h3 id="1-データクロージング"><a href="#1-データクロージング" class="headerlink" title="1.データクロージング"></a>1.データクロージング</h3><font size=3.5>
+
+<blockquote>
+<p>まずサイトからデータを取得してきました。コメント自体は<strong>ネタバレあり</strong>、<strong>ネタバレなし</strong>という2種類に分けられたので、それぞれ取ってきました。</p>
+</blockquote>
+</font>
+
+<p><font size=3><strong>①ネタバレなしデータの取得</strong></font></p>
+<pre><code>from selenium import webdriver
+import time
+browser = webdriver.Chrome()</code></pre>
+<font size=3>
+
+<blockquote>
+<p>サイトのコメントを見ていくと、2021年1月時点、およそ300ページほどあり、一ページつづ10本コメントがあります。そこで自動的にページを繰って全部のデータを取ってもらえると嬉しいですね.<br>色々記事を参考してましたが、難しいそうなコードを書かれて、いまいち理解できず・・・<br>自分なりに地味に考えたのは：最終ページ数を取ってきて、Range関数を使ってコツコツで集めるとのやり方でした。<br>サイトの要素を確認してみると、最終ページを示している <strong>【&gt;|】</strong> という印は<br>href=”/movies/86613?page=338”で指定されています。要するに、ここの338という数字は求めている最終ページ数ですね！<br></font>&gt;</p>
+</blockquote>
+<img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/lastpage_href.png" class="" title="lastpage_href">
+
+<pre><code>browser.get(&#39;https://filmarks.com/movies/86613/no_spoiler?page=1&#39;)
+time.sleep(3)
+
+links = []
+for link in browser.find_elements_by_xpath(&quot;//*[@href]&quot;):
+    if &quot;page&quot; in str(link.get_attribute(&#39;href&#39;)):
+        links.append(link.get_attribute(&#39;href&#39;))</code></pre>
+<font size=3>
+
+<blockquote>
+<p>取ってきたリンクいくつがありました、それぞれはページ2ー5、next page行く、最終ページ行くと見れますね。<br>今回はまずネタバレなしのデータを取得するので、page289はネタバレなしの合計ページ数ですね。<br>サイト上の状況と一致していることが確認しました。</p>
+</blockquote>
+</font>
+<img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/links.png" class="" title="links">
+<img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/no_spoiler_allpage.png" class="" title="no_spoiler_allpage">
+
+<pre><code>#ページ数のみを取得します。
+times_no_spoiler = links[-1].split(&quot;page=&quot;)[-1]
+times_no_spoiler
+#289</code></pre>
+<font size=3>
+
+<blockquote>
+<p>ほか、ユーザー名、ユーザーがつけたスコア、ユーザーの登録頻度の情報も取ってきたいので、一つの関数にまとめてみました。</p>
+</blockquote>
+<blockquote>
+<p>ただ最終ページは必ずコメント10本とは言えないので、最終ページ寸前のページまでしかこの関数を使ってません。</p>
+</blockquote>
+<blockquote>
+<p>最終ページは別途で処理してます。</p>
+</blockquote>
+</font>
+
+<pre><code>def find_texts(times,url):
+    texts = [] #コメント
+    scores = []　#スコア
+    users = []　#ユーザー名
+    conditions = [] #ユーザー登録頻度
+    for i in range(1,int(times)):
+        browser.get(url+str(i))
+        element_text = browser.find_elements(&#39;css selector&#39;,&#39;.p-mark__review&#39;)
+        element_score = browser.find_elements(&#39;css selector&#39;,&#39;.c-rating__score&#39;)
+        text = [m.text for m in element_text]
+        score = [l.text for l in element_score]
+        user = [n.get_attribute(&#39;alt&#39;) for n in browser.find_elements_by_tag_name(&#39;img&#39;)]
+        condition = [c.get_attribute(&#39;loading&#39;) for c in browser.find_elements_by_tag_name(&#39;img&#39;)]
+        texts.append(text)
+        scores.append(score[1:11])
+        users.append(user[3:13])
+        conditions.append(condition[3:13])
+    return texts,scores,users,conditions</code></pre>
+<font size=3>
+
+<blockquote>
+<p>早速ネタバレなしのデータを取ってきました。<br>(いえ、嘘です、早速ではなく、結構時間かかりました。)</p>
+</blockquote>
+</font>
+
+<pre><code>results_no_spoiler = find_texts(times_no_spoiler)
+text_no_spoiler,score_no_spoiler,user_no_spoiler,condition_no_spoiler = results_no_spoiler
+
+print(len(sum(results_no_spoiler[0],[])))
+print(len(sum(results_no_spoiler[1],[])))
+print(len(sum(results_no_spoiler[2],[])))
+print(len(sum(results_no_spoiler[3],[])))
+#2880
+#2880
+#2880
+#2880</code></pre>
+<font size=3>
+
+<blockquote>
+<p>問題がなさそうですね！引き続きネタバレなしの最終ページを！<br>（やり方地味過ぎて申し訳ないです・・・）</p>
+</blockquote>
+</font>
+
+<pre><code>browser = webdriver.Chrome()
+
+url_no_spoiler =&#39;https://filmarks.com/movies/86613/no_spoiler?page=&#39;
+
+browser.get(url_no_spoiler+str(times_no_spoiler))
+element_text_last_no_spoiler = browser.find_elements(&#39;css selector&#39;,&#39;.p-mark__review&#39;)
+element_score_last_no_spoiler = browser.find_elements(&#39;css selector&#39;,&#39;.c-rating__score&#39;)
+
+text_last_no_spoiler = [m.text for m in element_text_last_no_spoiler]
+score_last_no_spoiler = [l.text for l in element_score_last_no_spoiler]
+
+user_last_no_spoiler = [n.get_attribute(&#39;alt&#39;) for n in browser.find_elements_by_tag_name(&#39;img&#39;)]
+condition_last_no_spoiler = [c.get_attribute(&#39;loading&#39;) for c in browser.find_elements_by_tag_name(&#39;img&#39;)]
+
+print(len(text_last_no_spoiler))
+#7</code></pre>
+<font size=3>
+
+<blockquote>
+<p>最終ページ7本のコメントしかないようですね。実際にサイトの方で確認しましたら、一致でした。</p>
+</blockquote>
+</font>
+
+<pre><code>texts_no_spoiler = sum(text_no_spoiler,[])+text_last_no_spoiler
+scores_no_spoiler = sum(score_no_spoiler,[])+score_last_no_spoiler[1:8]
+users_no_spoiler = sum(user_no_spoiler,[])+user_last_no_spoiler[3:10]
+conditions_no_spoiler = sum(condition_no_spoiler,[])+condition_last_no_spoiler[3:10]
+
+import pandas as pd
+df_no_spoiler = pd.DataFrame(&#123;&#39;テキスト&#39;:texts_no_spoiler,
+                           &#39;スコア&#39;:scores_no_spoiler,
+                           &#39;ユーザー&#39;:users_no_spoiler,
+                           &#39;登録頻度&#39;:conditions_no_spoiler&#125;)
+df_no_spoiler[&#39;ネタバレ&#39;] = &#39;なし&#39;</code></pre>
+<font size=3>
+
+<blockquote>
+<p>これでネタバレなしのデータ取得できました。</p>
+</blockquote>
+</font>
+<img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/df_no_spoiler.png" class="" title="df_no_spoiler">
+
+<font size=3>
+
+<blockquote>
+<p>これでネタバレありのデータも同様な方法で取得し、最後できた全件データは3374件でした。</p>
+</blockquote>
+</font>
+<img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/df_all_data.png" class="" title="df_all_data">
+
+<h3 id="2-前処理と分かち書き"><a href="#2-前処理と分かち書き" class="headerlink" title="2.前処理と分かち書き"></a>2.前処理と分かち書き</h3><font size=3>
+
+<blockquote>
+<p>前処理では、絵文字、iphone系絵文字、改行記号、省略記号(…)、英語を小文字に統一、正規化、url、数字、各種記号の処理を行いました。</p>
+</blockquote>
+</font>
+
+<pre><code>import neologdn
+import re
+import emoji
+import string
+def filter(desstr, restr=&#39;&#39;):
+
+    #emoji
+    res = re.compile(u&#39;[\U00010000-\U0010ffff]&#39;)
+    res_emoji = res.sub(restr,desstr)
+
+    #iPhoneのemoji 
+    res_iphone_emoji = &#39;&#39;.join(c for c in desstr if c not in emoji.UNICODE_EMOJI) 
+
+    #改行記号
+    res_linebreak = &#39;&#39;.join(res_iphone_emoji.replace(&#39;&lt;br/&gt;&#39;,&#39;&#39;).split())
+
+    #省略記号
+    res_ellipsis = &#39;&#39;.join(res_linebreak.replace(&#39;…&#39;,&#39;&#39;).split())
+
+    #大文字→小文字
+    res_uppertolower = res_ellipsis.lower() 
+
+    #正規化
+    res_normalization = neologdn.normalize(res_uppertolower)
+
+    #url
+    res_url = re.sub(r&#39;https?://[\w/:%#\$&amp;\?\(\)~\.=\+\-]+&#39;,&#39;&#39;,res_normalization)
+
+    #記号
+    res_punctuation = res_url.translate(str.maketrans( &#39;&#39;, &#39;&#39;,string.punctuation)) 
+
+    #数字
+    res_num = &#39;&#39;.join([i for i in res_punctuation if not i.isdigit()])
+
+    return res_num
+text_ed = [filter(str(i)) for i in df[&#39;text&#39;]]
+df[&#39;texts_ed&#39;] = text_ed</code></pre>
+<font size=3>
+
+<blockquote>
+<p>今回Mecabを使って分かち書きを行いました。</p>
+</blockquote>
+</font>
+
+<pre><code>def wakati_by_mecab(text):
+    tagger = MeCab.Tagger(r&#39;C:\Users\※※\Anaconda3\envs\enviroment\Lib\site-packages\MeCab\mecab-ipadic-neologd&#39;)
+    tagger.parse(&#39;&#39;) 
+    node = tagger.parseToNode(text)
+    word_list = []
+    while node:
+        pos = node.feature.split(&quot;,&quot;)[0]
+        if pos in [&quot;名詞&quot;, &quot;動詞&quot;, &quot;形容詞&quot;]:
+            word = node.surface
+            word_list.append(word)
+        node = node.next
+    return &quot; &quot;.join(word_list)
+
+texts_wakati = [wakati_by_mecab(i) for i in text_ed]
+
+#stopwordsの処理
+texts_wakati_ed =[]
+for m in texts_wakati:
+text_wakati_ed = [i for i in m.split() if i not in df_stopwords.values.tolist()]
+texts_wakati_ed.append(text_wakati_ed)
+df[&#39;texts_wakati&#39;] = [&#39; &#39;.join(i) for i in texts_wakati_ed]</code></pre>
+<font size=3>
+
+<blockquote>
+<p>分かち書き行ったデータはこういう感じです</p>
+</blockquote>
+</font> 
+<img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/wakati.png" class="" title="wakati">
+
+<h3 id="3-登場人物と関連テーマ"><a href="#3-登場人物と関連テーマ" class="headerlink" title="3.登場人物と関連テーマ"></a>3.登場人物と関連テーマ</h3><h4 id="A-ワードクラウドでコメントの概要を把握"><a href="#A-ワードクラウドでコメントの概要を把握" class="headerlink" title="A.ワードクラウドでコメントの概要を把握"></a>A.ワードクラウドでコメントの概要を把握</h4><font size=3>
+
+<blockquote>
+<p>まずこの映画の内容について、コメント内一番話題となっている人物とテーマを探りたいので、<br>とりあえず一番よく出る単語の上位200位のワードクラウドで確認してみました。</p>
+</blockquote>
+</font> 
+
+<pre><code>from collections import Counter
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+from pyecharts.charts import *
+from pyecharts import options as opts
+from pyecharts.globals import ThemeType
+from IPython.display import Image
+
+word_count_1 = Counter(sum(texts_wakati_ed,[]))
+wc_1 = WordCloud(
+width=2000,
+height=1200,
+font_path=r&#39;C:\Users\★★\python\UDDigiKyokashoN-R.ttc&#39;,
+margin=2,
+relative_scaling=0.2,
+prefer_horizontal=1,
+colormap=&#39;tab20&#39;)
+wc2_1 = wc_1.generate_from_frequencies(word_count_1,200) 
+fig = plt.figure(figsize=(20,12))
+plt.imshow(wc2_1, interpolation=&quot;bilinear&quot;)
+plt.axis(&quot;off&quot;)
+plt.show()</code></pre>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/wc_1.png" class="" title="wc_1"></div>
+<font size=3>
+
+<blockquote>
+<p>ワードクラウドを確認して、以下のいくつのテーマについて気になりましたので、それぞれの内容を抽出してみました。<br><strong>[‘シャオヘイ’,’ムゲン’,’フーシー’,’人間’,’妖精’,’日本’,’中国’,’ジブリ’]</strong></p>
+</blockquote>
+</font> 
+
+<pre><code>l1=[]
+l2=[]
+for i in range(0,len(df[&#39;text&#39;])):
+    if &#39;シャオヘイ&#39; in df[&#39;text&#39;].iloc[i]:
+        l1.append(df[&#39;texts_wakati&#39;].iloc[i])
+    if &#39;小黒&#39; in df[&#39;text&#39;].iloc[i]:
+        l2.append(df[&#39;texts_wakati&#39;].iloc[i])
+...
+
+list_=[len(list(set(l1+l2+l13))),len(list(set(l6+l7+l8))),len(list(set(l3+l4+l5+l12))),len(l9),len(l10),len(l11),len(l14),len(l15)]
+df_kw = pd.DataFrame(list_,index=[&#39;シャオヘイ&#39;,&#39;ムゲン&#39;,&#39;フーシー&#39;,&#39;人間&#39;,&#39;妖精&#39;,&#39;ジブリ&#39;,&#39;日本&#39;,&#39;中国&#39;])
+df_kw=df_kw.reset_index().rename(columns = &#123;&#39;index&#39;:&#39;名前&#39;,0:&#39;回数&#39;&#125;)
+
+xaxis = df_kw[&#39;回数&#39;].to_list()
+yaxis = df_kw[&#39;名前&#39;].to_list()</code></pre>
+<img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/xyaxis.png" class="" title="xyaxis">
+
+<pre><code>#横棒グラフで集計結果を確認しました。
+c = (
+    Bar(init_opts = opts.InitOpts(theme = ThemeType.CHALK))
+    .add_xaxis(yaxis)
+    .add_yaxis(&#39;&#39;,xaxis).reversal_axis()
+    .set_global_opts(title_opts = opts.TitleOpts(title = &#39;テーマ言及回数&#39;,pos_left = &#39;top&#39;),
+                     yaxis_opts = opts.AxisOpts(axislabel_opts = opts.LabelOpts(font_size=13)),
+                     xaxis_opts = opts.AxisOpts(axislabel_opts = opts.LabelOpts(font_size=13))
+                    )
+    .set_series_opts(label_opts = opts.LabelOpts(font_size = 16,position =&#39;right&#39;))
+)
+c.render_notebook()</code></pre>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/%E3%83%86%E3%83%BC%E3%83%9E%E3%81%94%E3%81%A8%E3%81%AE%E7%B5%90%E6%9E%9C_1.png" class="" title="テーマごとの結果_1"></div>
+<font size=3>
+
+<blockquote>
+<p>テーマごとの詳細はワードクラウドで表示してみました。<br>5つのテーマの結果しか記載していないが、全然違いがないこと一目瞭然ですね。。。<br>おそらくユーザーのコメントテーマはかなり近くて、文章レベルじゃあわかりにくいと思うので、Sentenceレベルで行ってみました。</p>
+</blockquote>
+</font>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/wc_1_all.png" class="" title="wc_1_all"></div>
+<font size=3>
+
+<blockquote>
+<p>まず文章を一つずつのSentenceに分解しました。</p>
+</blockquote>
+</font>
+
+<pre><code>text_kw=&#39; &#39;.join(&#39; &#39;.join(&#39;&#39;.join(df[&#39;text&#39;].to_list()).split(&#39;、&#39;)).split(&#39;。&#39;)).split()</code></pre>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/sentence_cut.png" class="" title="sentence_cut"></div>
+
+<pre><code>kw_list = [&#39;シャオヘイ&#39;,&#39;小黒&#39;,&#39;フーシー&#39;,&#39;フーシ&#39;,&#39;風息&#39;,&#39;ムゲン&#39;,&#39;無限&#39;,&#39;師匠&#39;,&#39;人間&#39;,&#39;妖精&#39;,&#39;ジブリ&#39;,&#39;フウシー&#39;,&#39;黒猫&#39;,&#39;日本&#39;,&#39;中国&#39;]
+list_kw_text_sh = []
+list_kw_text_fs = []
+...
+list_kw = []
+for i in text_kw:
+    if kw_list[0] in i:
+        list_kw_text_sh.append(i)
+        list_kw.append(kw_list[0])
+    elif kw_list[1] in i:
+        list_kw_text_sh.append(i)
+        list_kw.append(kw_list[0])
+    elif kw_list[2] in i:
+        list_kw_text_fs.append(i)
+        list_kw.append(kw_list[2])
+    elif kw_list[3] in i:
+        list_kw_text_fs.append(i)
+        list_kw.append(kw_list[2])
+ ...
+df_count = pd.DataFrame(Counter(list_kw).keys(),Counter(list_kw).values(),columns =[&#39;KW&#39;] )
+df_count=df_count.reset_index().rename(columns = &#123;&#39;index&#39;:&#39;回数&#39;&#125;)
+df_count
+yaxis = df_count[&#39;KW&#39;].values.tolist()
+xaxis = df_count[&#39;回数&#39;].values.tolist()</code></pre>
+<font size=3>
+
+<blockquote>
+<p>上記得た統計結果をもとにした横棒グラフ結果とワードクラウドは以下の通りです。</p>
+</blockquote>
+<blockquote>
+<p>これらの結果からテーマごとの違いがわかりましたね。例えば、シャオヘイきっととにかく可愛いですよね、ムゲンはかっこ良く最強イメージの師匠ですね、フーシーの声優さんである櫻井孝宏さんは結構評価されたらろうね、仲間に関する、人間と妖精の共存、居場所が破壊されたりされたシーンがありましたね、この映画に日本のジブリや、ドラゴン、もののけ等の作品に影響され、かなり日本アニメ要素多く感じられましたよね。そこから中国文化に関して語られたユーザーもいたなどなどの情報が見られましたね。</p>
+</blockquote>
+</font>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/%E3%83%86%E3%83%BC%E3%83%9E%E3%81%94%E3%81%A8%E3%81%AE%E7%B5%90%E6%9E%9C_2.png" class="" title="テーマごとの結果_2"></div>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/wc_2_all_1.png" class="" title="wc_2_all_1"></div>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/wc_2_all_2.png" class="" title="wc_2_all_2"></div>
+
+<h4 id="B-ワードクラウドを自動生成する簡易版GUI"><a href="#B-ワードクラウドを自動生成する簡易版GUI" class="headerlink" title="B.ワードクラウドを自動生成する簡易版GUI"></a>B.ワードクラウドを自動生成する簡易版GUI</h4><font size=3>
+
+<blockquote>
+<p>この結果をもとに、任意のキーワードを入力すると、自動的にワードクラウドが出てくる簡易版GUIツールを作ってみました。<br>こんな感じです！(地味不可避・・・)<br>今後の課題としてどんどん改善していきたいと思います！</p>
+</blockquote>
+<font size=3>
+
+<pre><code>from tkinter import *
+import tkinter as tk
+
+#ワードクラウド生成用の関数
+def get_data():
+    theme_data = _input.get()
+    theme_texts =[i for i in text_kw if theme_data in i]
+    theme_wakati = [wakati_by_mecab(i) for i in theme_texts]
+    theme_count = Counter(&#39; &#39;.join(theme_wakati).split())
+    wc = WordCloud(
+        width=1800,
+        height=1200,
+        font_path=r&#39;C:\Users\※※\python\UDDigiKyokashoN-R.ttc&#39;,
+        margin=2,
+        relative_scaling=0.3,
+        prefer_horizontal=1,
+        colormap=&#39;tab20&#39;)
+    wc2 = wc.generate_from_frequencies(theme_count,300)
+    fig = plt.figure(figsize=(18,12))
+    plt.imshow(wc2, interpolation=&quot;bilinear&quot;)
+    plt.axis(&quot;off&quot;)
+    plt.show()
+
+#簡易版GUI作成
+app = Tk()
+_input=tk.Entry(app,show=None) #入力画面の設定
+_input.pack()　
+app.title(&#39;キーワード入力&#39;)
+screenwidth = app.winfo_screenwidth()
+screenheight = app.winfo_screenheight()
+dialog_width = 400
+dialog_height = 170
+app.geometry(
+    &quot;%dx%d+%d+%d&quot; % (dialog_width, dialog_height, (screenwidth - dialog_width) / 2, (screenheight - dialog_height) / 2))
+btn = Button(text =&#39;search&#39;,command = get_data,width = 10)
+btn.place(x=155,y = 80)
+btn.pack()
+app.mainloop()</code></pre>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/GUI.png" class="" title="GUI"></div>
+
+<h3 id="4-極性辞書による感情分析"><a href="#4-極性辞書による感情分析" class="headerlink" title="4.極性辞書による感情分析"></a>4.極性辞書による感情分析</h3><h4 id="A-単語感情極性対応表でスコアを付く"><a href="#A-単語感情極性対応表でスコアを付く" class="headerlink" title="A.単語感情極性対応表でスコアを付く"></a>A.単語感情極性対応表でスコアを付く</h4><font size=3>
+
+<blockquote>
+<p>極性辞書による感情分析は今回メインに以下の記事を参考して行いました。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://qiita.com/g-k/items/e49f68d7e2fed6e300ea">感情分析でニュース記事のネガポジ度合いをスコア化する</a></p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>まず極性辞書 (<a target="_blank" rel="noopener" href="http://www.lr.pi.titech.ac.jp/~takamura/pndic_ja.html">単語感情極性対応表</a>)を読み込み</p>
+<blockquote>
+<p>極性辞書と結合するため、分かち書きからデータの品詞情報を色々処理を行いました。</p>
+</blockquote>
+</blockquote>
+</font>
+
+<pre><code>#極性辞書を読み込み
+dict_= pd.read_table(&#39;極性辞書.txt&#39;,sep =&#39;:&#39;,header = None)
+dff = dict_.rename(columns =&#123;0:&#39;基本形&#39;,1:&#39;読み方&#39;,2:&#39;品詞&#39;,3:&#39;極性スコア&#39;&#125;)</code></pre>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/dff_dict.png" class="" title="dff_dict"></div>
+
+<pre><code>#分かち書き
+import MeCab
+tagger = MeCab.Tagger(r&#39;C:\Users\※※\Anaconda3\envs\enviroment\Lib\site-packages\MeCab\mecab-ipadic-neologd&#39;)
+texts = [tagger.parse(i) for i in df.texts_ed]</code></pre>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/texts_wakati.png" class="" title="texts_wakati"></div>
+
+<pre><code>tmps = []
+for t in texts:
+        tmp = [k.split(&#39;\t&#39;) for k in t.split(&#39;\n&#39;)]
+        tmp_ = tmp[:-2] #文末のEOS部分を切り捨て
+        tmps.append(tmp_)
+surfs = [pd.DataFrame(m).rename(columns = &#123;0:&#39;単語&#39;,2:&#39;読み方_old&#39;,3:&#39;基本形&#39;,4:&#39;品詞_old&#39;&#125;) for m in tmps]
+
+#形容詞-非自立可能、名詞-普通名詞-助数詞可能のような品詞情報を形容詞、名詞に修正
+llist= []
+for i in surfs:
+    list_ = []
+    for m in range(0,len(i)):
+        if i[&#39;品詞_old&#39;][m] !=None:
+            list_.append(i[&#39;品詞_old&#39;].str.split(&#39;-&#39;)[m][0])
+        else:
+            list_.append(i[&#39;品詞_old&#39;][m])
+    llist.append(list_) 
+
+#読み方をカタカナからひらがなに変更
+import jaconv
+llists= []
+for i in surfs:
+    list_y = []
+    for m in range(0,len(i)):
+        if i[&#39;読み方_old&#39;][m] != None:
+            list_y.append(jaconv.kata2hira(i[&#39;読み方_old&#39;][m]))
+        else:
+            list_y.append(i[&#39;読み方_old&#39;][m])
+    llists.append(list_y)
+
+#分かち書きされたデータと極性辞書を結合することによって、単語ごとにスコア値を付けていく
+score_results = []
+for i in range(0,len(surfs)):
+    surfs[i][&#39;品詞&#39;] = llist[i]
+    surfs[i][&#39;読み方&#39;] = llists[i]
+    if surfs[i].columns.size == 10:
+        score_result= pd.merge(surfs[i][[&#39;単語&#39;,&#39;基本形&#39;,&#39;読み方&#39;,&#39;品詞&#39;]],dff,on=[&#39;基本形&#39;,&#39;読み方&#39;,&#39;品詞&#39;],how = &#39;left&#39;)
+        score_results.append(score_result)
+    else:
+        score_results.append(surfs[i])</code></pre>
+<font size=3>
+
+<blockquote>
+<p>すべての文書は単語ごとにスコアが付けられました。<br>極性辞書にない単語のスコアはNaN値。<br>文書ごとにすべて単語のスコアを加算すると、文書ごとのスコアが得られる</p>
+</blockquote>
+</font>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/socre_singlearticle.png" class="" title="socre_singlearticle"></div>
+
+<pre><code>results = []
+for i in range(0,len(score_results)):
+    if score_results[i].columns.size == 5:
+        text = &#39;&#39;.join(list(score_results[i][&#39;単語&#39;]))
+        score = score_results[i][&#39;極性スコア&#39;].astype(float).sum()
+        score_r = score/score_results[i][&#39;極性スコア&#39;].astype(float).count()
+        result = [text,score,score_r]
+        results.append(result)
+    else:
+        results.append(score_results[i])
+df_score = []
+for i in range(0,len(results)):
+    if len(results[i]) == 3: 
+        dfff = pd.DataFrame(&#123;
+            &#39;テキスト&#39;:results[i][0],
+            &#39;累計スコア&#39;:results[i][1],
+            &#39;累計標準化スコア&#39;:results[i][2],
+            &#39;user&#39;:df.iloc[i][&#39;user&#39;],
+            &#39;score&#39;:df.iloc[i][&#39;score&#39;]&#125;,index =range(1))
+        df_score.append(dfff.iloc[[0]])
+ddf_score = pd.concat(df_score).reset_index().sort_values(&#39;累計標準化スコア&#39;,ascending=False)</code></pre>
+<font size=3>
+
+<blockquote>
+<p>一発で行った結果、上位10位と下位10位の内容は以下の通りでした。<br>分かち書きによるデータの品詞や読み方等極性辞書と一致しない単語があることで、スコア付けがズレが生じたことがわかりました。</p>
+<blockquote>
+<p>例えば2678行の「好きです」の「好き」は分かち書きした品詞が形状詞ですが、極性辞書内では名詞とのことで、スコアが付けられませんでした。</p>
+</blockquote>
+</blockquote>
+</font>
+
+<pre><code>ddf_score[:10:][&#39;テキスト&#39;].to_list()
+#[&#39;フーシーにもムゲンにもそうだよねぇっていう気持ち。シャオヘイがかーわいい。&#39;,
+ &#39;とっても可愛かったー猫好きなら見るべきストーリーも良かった&#39;,
+ &#39;昭和の東映まんが祭りを彷彿とさせる力強くまっすぐなアニメーション。素晴らしかった。&#39;,
+ &#39;やさしいタッチのキャラデザから繰り広げられるゴリッゴリのエフェクトアニメーション作画に圧巻ファンタジーとアクションのミックスシャオヘイかわゆい&#39;,
+ &#39;『ドラゴンボールブロリー』並みのアクションバトルシーンに圧巻&#39;,
+ &#39;おもろかったストーリーわかりやすいし、作画が神デパートでのバトルシーンが一番好き&#39;,
+ &#39;ムゲン様バトルシーンが凄かったこれはdxでみればよかったな&#39;,
+ &#39;可愛い絵が綺麗可愛いアクションシーンがすごい可愛い面白い可愛い可愛い可愛い&#39;,
+ &#39;これは満足ですまずシャオヘイが可愛いし、ムゲン様がカッコいい&#39;,
+ &#39;良いリアルファンタジーで、良い師弟ものでした。わかりやすい面白さがあります。&#39;]
+
+ ddf_score[-10::][&#39;テキスト&#39;].to_list()
+ #[&#39;ナルト×ドラゴンボール×ジブリみたいで、そら大好きになりますわといった感じです。&#39;,
+ &#39;ドラゴンボールと千と千尋となんかをミックスした感じ。シャオヘイとてもきゃわわ。&#39;,
+ &#39;子供と観たんだけれども、ストーリーがよくわからなかったみたい。&#39;,
+ &#39;アニメで見たいのはこういうのなんだよ&#39;, →score=0
+ &#39;ムゲン様フーシームゲン様フーシーウッ&#39;,→score=0
+ &#39;え好き&#39;,→score=0
+ &#39;アアアァァァァクションンンンンンンだったこれはサイドストーリーひたすら観たいな&#39;,→score=0
+ &#39;livezound×rgbレーザーチネチッタチネm&#39;,→score=0
+ &#39;中国語版ユジク日本語吹き替え版バルト&#39;,→score=0
+ &#39;好きです&#39;→score=0]</code></pre>
+<h4 id="B-極性辞書を生成した上でスコアを付く"><a href="#B-極性辞書を生成した上でスコアを付く" class="headerlink" title="B.極性辞書を生成した上でスコアを付く"></a>B.極性辞書を生成した上でスコアを付く</h4><font size=3>
+
+<blockquote>
+<p>既存の極性辞書は今回のデータと相性が良くないようなので、独自の極性辞書を生成する手を考えました。</p>
+<blockquote>
+<p>メインはこちらの記事<a target="_blank" rel="noopener" href="https://qiita.com/g-k/items/1b7c765fa6520297ca7c">感情分析に用いる極性辞書を自動生成する</a>を参考しました。<br>model_neologd.vecの取得はこちらの記事<a target="_blank" rel="noopener" href="https://qiita.com/Hironsan/items/513b9f93752ecee9e670">fastTextの学習済みモデルを公開しました</a>をご参考ください。<br>posi_listとnega_listはデータ内容をみて適宜修正あり</p>
+</blockquote>
+</blockquote>
+</font>
+
+<pre><code>import gensim
+model = gensim.models.KeyedVectors.load_word2vec_format(&#39;model_neologd.vec&#39;, binary=False)
+
+posi_list = [&#39;優れる&#39;, &#39;良い&#39;,&#39;喜ぶ&#39;,&#39;褒める&#39;, &#39;めでたい&#39;,&#39;賢い&#39;,&#39;善い&#39;, &#39;適す&#39;,&#39;天晴&#39;,&#39;祝う&#39;, &#39;功績&#39;,&#39;賞&#39;,
+&#39;嬉しい&#39;,&#39;喜び&#39;,&#39;才知&#39;,&#39;徳&#39;, &#39;才能&#39;,&#39;素晴らしい&#39;,&#39;芳しい&#39;,&#39;称える&#39;,&#39;適切&#39;,&#39;崇める&#39;,&#39;助ける&#39;,&#39;抜きんでる&#39;,&#39;清水&#39;,
+&#39;雄雄しい&#39;,&#39;仕合せ&#39;,&#39;幸い&#39;,&#39;吉兆&#39;,&#39;秀でる&#39;,&#39;かわいい&#39;,&#39;すすめ&#39;,&#39;dvd&#39;,&#39;可愛&#39;,&#39;涙腺&#39;,&#39;泣き&#39;,&#39;豪華&#39;,&#39;うまい&#39;,
+&#39;緻密&#39;,&#39;おもしろかっ&#39;,&#39;加点&#39;,&#39;最高&#39;,&#39;すごい&#39;,&#39;魅力&#39;,&#39;王道&#39;,&#39;綺麗&#39;,&#39;感動&#39;,&#39;楽しめ&#39;,&#39;好き&#39;,&#39;一番&#39;,&#39;やすい&#39;,&#39;いえー&#39;,
+&#39;酔いしれ&#39;,&#39;微笑み&#39;]
+nega_list = [&#39;悪い&#39;, &#39;死ぬ&#39;, &#39;病気&#39;, &#39;酷い&#39;, &#39;罵る&#39;, &#39;浸ける&#39;, &#39;卑しい&#39;,&#39;下手&#39;, &#39;苦しむ&#39;, &#39;苦しい&#39;, &#39;付く&#39;, 
+&#39;厳しい&#39;, &#39;難しい&#39;, &#39;殺す&#39;, &#39;難い&#39;, &#39;荒荒しい&#39;,&#39;惨い&#39;, &#39;責める&#39;, &#39;敵&#39;, &#39;背く&#39;, &#39;嘲る&#39;, &#39;苦しめる&#39;, &#39;辛い&#39;, 
+&#39;物寂しい&#39;, &#39;罰&#39;, &#39;不貞腐る&#39;,&#39;寒い&#39;, &#39;下らない&#39;,&#39;残念&#39;,&#39;疲れ&#39;,&#39;複雑&#39;,&#39;真似&#39;,&#39;不足&#39;,&#39;わから&#39;,&#39;違う&#39;,&#39;BLM&#39;,&#39;デモ&#39;,
+&#39;過激&#39;,&#39;対立&#39;,&#39;ステレオタイプ&#39;,&#39;古い&#39;,&#39;寝&#39;,&#39;謎&#39;,&#39;足し&#39;,&#39;オリジナリティ&#39;,&#39;苦痛&#39;,&#39;後進&#39;,&#39;昭和&#39;,&#39;稚拙&#39;,&#39;なさ&#39;,&#39;退屈&#39;,
+&#39;高かっ&#39;,&#39;残ら&#39;,&#39;説明&#39;,&#39;しんど&#39;,&#39;減点&#39;,&#39;違和感&#39;,&#39;ぽんぽこ&#39;,&#39;粗&#39;,&#39;仕方ない&#39;,&#39;合わ&#39;,&#39;掘り下げ&#39;,&#39;薄い&#39;,&#39;未熟&#39;,&#39;苦手&#39;,
+&#39;ダメ&#39;,&#39;ごめん&#39;,&#39;ガッカリ&#39;,&#39;眠&#39;,&#39;抑圧&#39;,&#39;にくい&#39;]
+
+def posi_nega_score(x):
+    #ポジティブ度合いの判定
+    posi = []
+    for i in posi_list:
+        try:
+            n = model.similarity(i, x)
+            posi.append(n)
+        except:
+            continue
+    try:
+        posi_mean = sum(posi)/len(posi)
+    except:
+        posi_mean = 0
+    #ネガティブ度合いの判定
+    nega = []
+    for i in nega_list:
+        try:
+            n = model.similarity(i, x)
+            nega.append(n)
+        except:
+            continue
+    try:
+        nega_mean = sum(nega)/len(nega)
+    except:
+        nega_mean = 0
+    if posi_mean &gt; nega_mean:
+        return posi_mean
+    if nega_mean &gt; posi_mean:
+        return -nega_mean
+    else:
+        return 0
+
+for i in score_results:
+    if i.columns.size !=2:
+        i[&#39;極性スコア_new&#39;] = i[&#39;単語&#39;].apply(lambda x : posi_nega_score(x))</code></pre>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/score_result_2.png" class="" title="score_result_2"></div>
+<font size=3>
+
+<blockquote>
+<p>新しく得た極性スコアを用いて文書ごとのスコアを算出しましょう</p>
+</blockquote>
+</font>
+
+<pre><code>#スコアを標準化
+import numpy as np
+for i in score_results:
+    if i.columns.size!=2:
+        sscore = np.array(i[&#39;極性スコア_new&#39;])
+        sscore_std = (sscore - sscore.min())/(sscore.max() - sscore.min())
+        sscore_scaled = sscore_std * (1 - (-1)) + (-1)
+        i[&#39;標準化スコア_new&#39;] = sscore_scaled
+
+#文書のスコアを算出
+results_new = []
+for i in score_results:
+    if i.columns.size != 2:
+        text_new = &#39;&#39;.join(list(i[&#39;単語&#39;]))
+        score_new = i[&#39;標準化スコア_new&#39;].astype(float).sum()
+        score_r_new = score_new/i[&#39;標準化スコア_new&#39;].astype(float).count()
+        result_new = [text_new,score_new,score_r_new]
+        results_new.append(result_new)
+    else:
+        results_new.append(i)
+
+#上位10位と下位10位
+ddf_score_new[:10:][&#39;テキスト&#39;].to_list()
+#[&#39;戦目新宿バルト戦目t・ジョイプリンス品川戦目新宿バルト戦目新宿バルト戦目チネチッタ川崎戦目チネチッタ川崎最新字幕版戦目チネチッタ川崎最新字幕版&#39;,
+ &#39;久しぶりにちゃんとしたアニメーション映画を観たなっていう感じだった&#39;,
+ &#39;期待どおり最高。ストーリー、キャラ、アクション、テンポ感、会話の掛け合い、声優来場者特典イラストカード。&#39;,
+ &#39;可愛い絵が綺麗可愛いアクションシーンがすごい可愛い面白い可愛い可愛い可愛い&#39;,
+ &#39;『ドラゴンボールブロリー』並みのアクションバトルシーンに圧巻&#39;,
+ &#39;大変大変大変大変大変大変大変大変大変大変大変大変大変大変大変大変大変大変大変大変大変に、好みの映画でしたパンフ売り切れだったので、アニプレックスさんの通販で買いました。買えてよかった&#39;,
+ &#39;涙腺ガバだから泣いためちゃくちゃ王道だしクオリティ高い中国アニメいいです&#39;,
+ &#39;バトルかっこよす。櫻井vs宮野、木属性vs金属性、自然vs人工。&#39;,
+ &#39;超神作画、、ムゲンさま、、宮野さま、、共に生きること&#39;,
+ &#39;もう一度見たい★★★★★期待以上☆☆☆☆期待通り☆☆☆期待外れ☆☆時間返せ☆dynamic・・・・・・・・・・・★・・・・・・realisticーーfantastic・・・・・・・・・・・・・・・・・・static日時場所バルト客入☆☆★☆☆&#39;]
+
+ddf_score_new[-10::][&#39;テキスト&#39;].to_list()
+[&#39;線も造形もシンプルだけどとにかく動き回りまくってて楽しいキャラクターや世界観に想像の余地があってもっと見たくなるからまで説明する鬼滅とはある意味反対でそこは好み&#39;,
+ &#39;しゅき正直話として飲み込めないとこも多々あったけど、しゅきという感情にねじ伏せられる&#39;,
+ &#39;かわいいしかない映画。ロシャオとムゲンのやり取りが好きすぎる&#39;,
+ &#39;変化を受けいられない人たちは切り捨てるしかなかったのかと思ったら、悲しくなってきた&#39;,
+ &#39;「《共存》コソコソ生きろって」構図と動きの表現に勢いがある。話の内容は製作国の最近のことを考えるとちょっと複雑。&#39;,
+ &#39;ソフト化未定ってどういうことやアニプレックスなんとかしてくれや&#39;,
+ &#39;アニメーションはすごく迫力がありキャラクターも可愛らしく大変楽しめたがblm運動や香港のデモのことなどが頭によぎりマイノリティの過激派と穏健派の対立という物語はもう古いというかマジョリティによるステレオタイプの再生産じゃ無いかと思ってしまった&#39;,
+ &#39;ひたすらかわいい、しかもアクションが楽しい字幕のスピード、大きさ、色がいつもの映画のそれとは違ってて追えない箇所が多かった&#39;,
+ &#39;森になる森になるしかなかった森になるしかなかった人はどうすればいいのか&#39;,
+ &#39;とにかくシャオヘイがかわいい話が進むにつれて変化するムゲンとの関係も見ていて楽しかった&#39;]</code></pre>
+<font size=3>
+
+<blockquote>
+<p>うん、ちょっとまずいですね・・・<br>‘〇〇良かったですが、〇〇はダメですね’というようなコメントはちらほら見られますね<br>すごい人から、中盤スコアを除くと、悪い評価と良い評価の差が付けられるかもしれないというアドバイスを頂きましたため、実施してみましょう。</p>
+</blockquote>
+</font>
+
+<pre><code>results_new = []
+for i in score_results:
+if i.columns.size != 2:
+    text_new = &#39;&#39;.join(list(i[&#39;単語&#39;]))
+    score_new = i[abs(i[&#39;標準化スコア_new&#39;])&gt;0.5][&#39;標準化スコア_new&#39;].sum() #極性スコアの絶対値は0.5以上しか加算しないと指定
+    score_r_new = score_new/i[&#39;標準化スコア_new&#39;].astype(float).count()
+    result_new = [text_new,score_new,score_r_new]
+    results_new.append(result_new)
+else:
+    results_new.append(i)
+
+#上位10位と下位10位</code></pre>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/score_result_4.png" class="" title="score_result_4"></div>
+<div style="width:100 %;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/score_result_5.png" class="" title="score_result_5"></div>
+
+<font size=3>
+
+<blockquote>
+<p>若干改善?でもやはり一部良い評価なのに下位に来てしまった文書がありますね<br>またそもそも各単語のスコアを確認してみると、シャオヘイやムゲンというキャラクタ名のスコアもマイナスになっていて、更に「話」や「が」、「つれ」、「の」等も無駄にマイナスになっていますね。やはり今回生成した辞書そのものが怪しいですね。。</p>
+</blockquote>
+</font>
+<div style="width:100 %;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/score_result_6.png" class="" title="score_result_6"></div>
+
+<font size=3>
+
+<blockquote>
+<p>それに応じて得たスコアも怪しいかもしれないですが、こんな感じです。</p>
+</blockquote>
+</font>
+
+<pre><code>data = ddf_score_new[ddf_score_new[&#39;スコア&#39;]!=&#39;-&#39;][&#39;累計標準化スコア&#39;].to_list()
+fig = plt.figure(figsize=(12,8))
+plt.hist(data,bins=40, density=True,stacked=True, facecolor=&quot;blue&quot;, edgecolor=&quot;black&quot;, alpha=0.7)
+plt.show()</code></pre>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/score_plot.png" class="" title="score_plot"></div>
+
+<pre><code>score_new = [round((3+i/0.5),1) for i in ddf_score_new[&#39;累計標準化スコア&#39;]]
+ddf_score_new[&#39;score_test&#39;] = score_new</code></pre>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/score_test.png" class="" title="score_test"></div>
+
+<h4 id="C-まとめ"><a href="#C-まとめ" class="headerlink" title="C.まとめ"></a>C.まとめ</h4><font size=3>
+
+<blockquote>
+<p>極性辞書を使って、容易にすべてのデータに対してスコアをつけられることが使いやすいですね<br>しかし、生成した辞書の正確性をどのように保証していくのか、今後の課題として探求していきたいと思います。<br>中盤のスコアを無視し、両端側(今回は絶対値0.5以上のスコアを加算)スコアの加算は有効な手段と考えられます。</p>
+</blockquote>
+</font>
+
+<h3 id="5-機械学習による感情分析-LSTM-今後データ量を増加する予定"><a href="#5-機械学習による感情分析-LSTM-今後データ量を増加する予定" class="headerlink" title="5.機械学習による感情分析_LSTM(今後データ量を増加する予定)"></a>5.機械学習による感情分析_LSTM(今後データ量を増加する予定)</h3><h4 id="A-ラベル付け"><a href="#A-ラベル付け" class="headerlink" title="A.ラベル付け"></a>A.ラベル付け</h4><font size=3>
+
+<blockquote>
+<p>まずユーザーのスコアによるポジフラグとネガフラグを付けていきたいと思いますが、今回スコア2以下のデータはわずか7件しかないため、スコア3.5以下のデータのうち、ネガ情報入っているデータをネガフラグつけることにしました。(ここはあくまで人工知能の人工の部分です。)</p>
+</blockquote>
+</font>
+
+<pre><code>#今回のテストデータ
+df.loc[df[&#39;label&#39;] == &#39;-&#39;,&#39;sentiment&#39;] = 3
+#ネガフラグデータ
+df.loc[df[&#39;label&#39;] == &#39;0&#39;,&#39;sentiment&#39;] =0
+#ポジフラグデータ
+df.loc[(df[&#39;label&#39;] == &#39;1&#39;),&#39;sentiment&#39;] =1
+#ネガではなく、ポジでもないデータ
+df.loc[df[&#39;label&#39;] == &#39;2&#39;,&#39;sentiment&#39;] =2
+print(len(df[df.sentiment == 1]),len(df[df.sentiment == 0]),len(df[df.sentiment == 2]),len(df[df.sentiment == 3]))
+#2302 180 587 305</code></pre>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/sentiment_plot_1.png" class="" title="sentiment_plot_1"></div>
+
+<h4 id="B-ベクトル化"><a href="#B-ベクトル化" class="headerlink" title="B.ベクトル化"></a>B.ベクトル化</h4><font size=3>
+
+<blockquote>
+<p>前処理と分かち書きを行いましたら、gensimのword2vecモデルを使ってデータのベクトル化を行いました</p>
+</blockquote>
+</font>
+
+<pre><code>import gensim
+model = gensim.models.KeyedVectors.load_word2vec_format(&#39;model_neologd.vec&#39;, binary=False)
+#Wikiモデル内格納している各単語
+vocab_list = list(model.wv.vocab.keys())
+#Wikiモデル内格納している各単語のベクトル
+word_vectors = model.wv.syn0
+#Wikiモデル内格納している各単語及び単語のインデックス情報
+word_index = &#123;word: index for index, word in enumerate(vocab_list)&#125;
+
+len_list =[len(i.split()) for i in df[&#39;texts_wakati&#39;]]
+print(&#39;ファイル全件&#39;,len(len_list),&#39;件です&#39;)
+print(&#39;単語全部&#39;,sum(len_list),&#39;個です&#39;)
+print(&#39;単語数の最大値は&#39;,max(len_list),&#39;です&#39;)
+#ファイル全件 3374 件です
+#単語全部 206770 個です
+#単語数の最大値は 2087 です
+
+import random
+pos_data = df[df[&#39;sentiment&#39;] == 1]
+neg_data = df[df[&#39;sentiment&#39;] == 0]
+#ポジ・ネガデータを17:1で分割する
+pos_index_train = random.sample(list(pos_data.index),2174)
+neg_index_train = random.sample(list(neg_data.index),170)
+#インデックスを取得
+pos_index_validation = [x for x in pos_data.index if x not in pos_index_train]
+neg_index_validation = [x for x in neg_data.index if x not in neg_index_train]
+#テキストデータ等を取得
+pos_sentence_train = pos_data.loc[pos_index_train]
+neg_sentence_train = neg_data.loc[neg_index_train]
+pos_sentence_validation = pos_data.loc[pos_index_validation]
+neg_sentence_validation = neg_data.loc[neg_index_validation]
+
+#trainデータとvalidデータを結合する
+df_train = pd.concat([pos_sentence_train,neg_sentence_train],axis =0)
+df_validation = pd.concat([pos_sentence_validation,neg_sentence_validation],axis =0)
+df_all = pd.concat([df_train,df_validation],axis = 0)
+print(len(df_train),len(df_validation),len(df_all))
+#2344 138 2482
+X_all = df_all.texts_wakati.tolist()
+X_train = df_train.texts_wakati.tolist()
+X_validation = df_validation.texts_wakati.tolist()
+y_train = df_train[&#39;sentiment&#39;].values.astype(&#39;int8&#39;)
+
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
+#まずTokenizerを使ってベクトルを作成してみました
+tokenizer = Tokenizer(
+    nb_words = 2000,
+    filters=&#39;!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?@[\\]^_`&#123;|&#125;~\t\n&#39;,
+    lower=True,
+    split=&#39; &#39;)
+tokenizer.fit_on_texts(X_all)
+X = tokenizer.texts_to_sequences(X_all)
+X = pad_sequences(X)
+X.shape
+#(2482,1715)</code></pre>
+<h4 id="C-LSTMモデルを使って実施"><a href="#C-LSTMモデルを使って実施" class="headerlink" title="C.LSTMモデルを使って実施"></a>C.LSTMモデルを使って実施</h4><pre><code>embed_dim = 128
+lstm_out = 256
+batch_size = 32
+
+from keras.models import Sequential
+from keras.layers import Embedding
+from tensorflow.keras.layers import Dropout, Dense, LSTM,Flatten
+model_1 =  Sequential()
+model_1.add(Embedding(2000,embed_dim,input_length = X.shape[1]))
+model_1.add(LSTM(lstm_out,dropout=0.2,return_sequences=True))
+model_1.add(Flatten())
+model_1.add(Dense(2,activation=&#39;softmax&#39;))
+model_1.compile(loss = &#39;categorical_crossentropy&#39;, optimizer=&#39;adam&#39;,metrics = [&#39;accuracy&#39;])
+print(model_1.summary())</code></pre>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/LSTM.png" class="" title="LSTM"></div>
+
+<pre><code>from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+from keras.callbacks import Callback
+
+x_train5,y_train5,x_label5,y_label5 = train_test_split(X_train,y_binary, train_size=0.8, random_state=234)
+
+history =  model_1.fit(x_train5,x_label5,batch_size=batch_size,epochs= 2,validation_data=(y_train5, y_label5),verbose=2)</code></pre>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/LSTM_2.png" class="" title="LSTM_2"></div>
+
+<pre><code>y_lstm = model_1.predict(X_validation,batch_size=batch_size)
+df_validation[&#39;score_new&#39;] = [round((i/0.2),1) for i in y_lstm[:,1].tolist()]
+
+#出た結果とユーザーの評価と比較してみると
+xaxis = df_validation[&#39;user&#39;].tolist()
+yaxis1 = df_validation[&#39;score&#39;].astype(float).tolist()
+yaxis2 = df_validation[&#39;score_new&#39;].astype(float).tolist()
+plt.figure(figsize = (12,8))
+plt.title(&#39;Result Analysis&#39;)
+plt.plot(yaxis1,color=&#39;red&#39;,linewidth=2.0,linestyle=&#39;--&#39;,label = &#39;user&#39;)
+plt.plot(yaxis2,color=&#39;green&#39;,linewidth=2.0,linestyle=&#39;solid&#39;,label = &#39;LSTM&#39;)
+plt.legend()
+plt.show()</code></pre>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/01/08/02_luoxiaohei/LSTM_1.png" class="" title="LSTM_1"></div>
+
+<h4 id="まとめ"><a href="#まとめ" class="headerlink" title="まとめ"></a>まとめ</h4><blockquote>
+<p>epochs5回と30回も実行してみましたが、どうやらトレーニングデータのaccuracyがひたすらよくなって、val_accuracyは維持する結果しかならないですね。<br>そもそも3000件しかないデータだとディプラーニングで過学習しやすいと後ほど知人にからかわれました・・・<br>とりあえずデータを増加してから再度チャレンジしたいと思います！！！</p>
+</blockquote>
+<h3 id="6-残り課題"><a href="#6-残り課題" class="headerlink" title="6.残り課題"></a>6.残り課題</h3><blockquote>
+<p>極性辞書のチューニング<br>LSTMのパラメータファインチューニング<br>絵文字といった感情表現を含めて考慮したら？<br>異常検知<br>人物のネットワーク分析</p>
+</blockquote>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><p><a target="_blank" rel="noopener" href="https://www.selenium.dev/documentation/en/webdriver/web_element/">1.selenium Web element</a><br><a target="_blank" rel="noopener" href="https://qiita.com/yoshimo123/items/85331d881aed9ad41020">2.pythonで絵文字を駆逐する</a><br><a target="_blank" rel="noopener" href="https://qiita.com/g-k/items/1b7c765fa6520297ca7c">3.感情分析に用いる極性辞書を自動生成する</a><br><a target="_blank" rel="noopener" href="https://qiita.com/g-k/items/e49f68d7e2fed6e300ea">4.感情分析でニュース記事のネガポジ度合いをスコア化する</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/q_u_a_r_t_e_r/article/details/111286094">5.Python实现输入电影名字自动生成豆瓣评论词云图（带GUI界面）小程序</a><br><a target="_blank" rel="noopener" href="https://qiita.com/Hironsan/items/513b9f93752ecee9e670">6.fastTextの学習済みモデルを公開しました</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://twitter.com/joreyooooolo">
+            <span class="icon">
+              <i class="fab fa-twitter"></i>
+            </span>
+
+            <span class="label">Twitter</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Jorey-s-Blog/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag"># 自然言語処理</a>
+              <a href="/Jorey-s-Blog/tags/%E3%82%AF%E3%83%AD%E3%83%BC%E3%82%B8%E3%83%B3%E3%82%B0/" rel="tag"># クロージング</a>
+              <a href="/Jorey-s-Blog/tags/%E6%84%9F%E6%83%85%E5%88%86%E6%9E%90/" rel="tag"># 感情分析</a>
+              <a href="/Jorey-s-Blog/tags/LSTM/" rel="tag"># LSTM</a>
+              <a href="/Jorey-s-Blog/tags/GUI/" rel="tag"># GUI</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Jorey-s-Blog/2021/01/05/04_bilibili/" rel="prev" title="04_bilibili三国志_中国ファンの自作動画の弾幕を取得してみた">
+      <i class="fa fa-chevron-left"></i> 04_bilibili三国志_中国ファンの自作動画の弾幕を取得してみた
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Jorey-s-Blog/2021/01/12/2021%E5%B9%B41%E6%9C%88SQL%E7%B7%B4%E7%BF%92%E8%AA%B2%E9%A1%8C%E5%9B%9E%E7%AD%94/" rel="next" title="2021年1月SQL練習課題回答">
+      2021年1月SQL練習課題回答 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1EphGUoLq3zryN" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E3%83%87%E3%83%BC%E3%82%BF%E3%82%AF%E3%83%AD%E3%83%BC%E3%82%B8%E3%83%B3%E3%82%B0"><span class="nav-text">1.データクロージング</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%89%8D%E5%87%A6%E7%90%86%E3%81%A8%E5%88%86%E3%81%8B%E3%81%A1%E6%9B%B8%E3%81%8D"><span class="nav-text">2.前処理と分かち書き</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%99%BB%E5%A0%B4%E4%BA%BA%E7%89%A9%E3%81%A8%E9%96%A2%E9%80%A3%E3%83%86%E3%83%BC%E3%83%9E"><span class="nav-text">3.登場人物と関連テーマ</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-%E3%83%AF%E3%83%BC%E3%83%89%E3%82%AF%E3%83%A9%E3%82%A6%E3%83%89%E3%81%A7%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%88%E3%81%AE%E6%A6%82%E8%A6%81%E3%82%92%E6%8A%8A%E6%8F%A1"><span class="nav-text">A.ワードクラウドでコメントの概要を把握</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E3%83%AF%E3%83%BC%E3%83%89%E3%82%AF%E3%83%A9%E3%82%A6%E3%83%89%E3%82%92%E8%87%AA%E5%8B%95%E7%94%9F%E6%88%90%E3%81%99%E3%82%8B%E7%B0%A1%E6%98%93%E7%89%88GUI"><span class="nav-text">B.ワードクラウドを自動生成する簡易版GUI</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%A5%B5%E6%80%A7%E8%BE%9E%E6%9B%B8%E3%81%AB%E3%82%88%E3%82%8B%E6%84%9F%E6%83%85%E5%88%86%E6%9E%90"><span class="nav-text">4.極性辞書による感情分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-%E5%8D%98%E8%AA%9E%E6%84%9F%E6%83%85%E6%A5%B5%E6%80%A7%E5%AF%BE%E5%BF%9C%E8%A1%A8%E3%81%A7%E3%82%B9%E3%82%B3%E3%82%A2%E3%82%92%E4%BB%98%E3%81%8F"><span class="nav-text">A.単語感情極性対応表でスコアを付く</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E6%A5%B5%E6%80%A7%E8%BE%9E%E6%9B%B8%E3%82%92%E7%94%9F%E6%88%90%E3%81%97%E3%81%9F%E4%B8%8A%E3%81%A7%E3%82%B9%E3%82%B3%E3%82%A2%E3%82%92%E4%BB%98%E3%81%8F"><span class="nav-text">B.極性辞書を生成した上でスコアを付く</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#C-%E3%81%BE%E3%81%A8%E3%82%81"><span class="nav-text">C.まとめ</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%81%AB%E3%82%88%E3%82%8B%E6%84%9F%E6%83%85%E5%88%86%E6%9E%90-LSTM-%E4%BB%8A%E5%BE%8C%E3%83%87%E3%83%BC%E3%82%BF%E9%87%8F%E3%82%92%E5%A2%97%E5%8A%A0%E3%81%99%E3%82%8B%E4%BA%88%E5%AE%9A"><span class="nav-text">5.機械学習による感情分析_LSTM(今後データ量を増加する予定)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-%E3%83%A9%E3%83%99%E3%83%AB%E4%BB%98%E3%81%91"><span class="nav-text">A.ラベル付け</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB%E5%8C%96"><span class="nav-text">B.ベクトル化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#C-LSTM%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E5%AE%9F%E6%96%BD"><span class="nav-text">C.LSTMモデルを使って実施</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E3%81%BE%E3%81%A8%E3%82%81"><span class="nav-text">まとめ</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%AE%8B%E3%82%8A%E8%AA%B2%E9%A1%8C"><span class="nav-text">6.残り課題</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jorey"
+      src="/Jorey-s-Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jorey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/Jorey-s-Blog/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/Jorey-s-Blog/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/Jorey-s-Blog/tags/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/7546836811" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;7546836811" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/joreyooooolo" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;joreyooooolo" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jorey</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">Symbols count total: </span>
+    <span title="Symbols count total">67k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    <span title="Reading time total">1:01</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/Jorey-s-Blog/lib/anime.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/pjax/pjax.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/velocity/velocity.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/Jorey-s-Blog/js/utils.js"></script>
+
+<script src="/Jorey-s-Blog/js/motion.js"></script>
+
+
+<script src="/Jorey-s-Blog/js/schemes/muse.js"></script>
+
+
+<script src="/Jorey-s-Blog/js/next-boot.js"></script>
+
+<script src="/Jorey-s-Blog/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  #<!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/Jorey-s-Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Jorey-s-Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Jorey-s-Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Jorey-s-Blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/Jorey-s-Blog/css/main.css">
+
+
+<link rel="stylesheet" href="/Jorey-s-Blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/Jorey-s-Blog/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":true,"dimmer":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="本記事では、MeCabとは、公式サイトからダウンロードしてきたMeCabのことを言う、Anaconda上のMeCabはAnaconda上でダウンロードしてきたMeCabを指します。    1)ネット上色々記事を参考してましたが、ほぼBoW環境をもとに紹介されています。2)Windows環境+Anaconda(Python3.7)上では、下記記事の記載されている通り実行したらうまく行けましたので、メ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows環境上のAnacondaにMecabのユーザー辞書とNEologd辞書のインストール">
+<meta property="og:url" content="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/01/22/Mecab%20in%20Windows/index.html">
+<meta property="og:site_name" content="LittleVoice-g-string">
+<meta property="og:description" content="本記事では、MeCabとは、公式サイトからダウンロードしてきたMeCabのことを言う、Anaconda上のMeCabはAnaconda上でダウンロードしてきたMeCabを指します。    1)ネット上色々記事を参考してましたが、ほぼBoW環境をもとに紹介されています。2)Windows環境+Anaconda(Python3.7)上では、下記記事の記載されている通り実行したらうまく行けましたので、メ">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/mecab_download.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/NEologd_xz.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/NEologd_xz_csv.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/NEologd_dic.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/user_foo.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/foo_dic.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/jupyter_end.png">
+<meta property="article:published_time" content="2021-01-21T16:31:20.000Z">
+<meta property="article:modified_time" content="2021-01-24T08:19:39.534Z">
+<meta property="article:author" content="Jorey">
+<meta property="article:tag" content="自然言語処理">
+<meta property="article:tag" content="MeCab">
+<meta property="article:tag" content="他人記事参照">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/mecab_download.png">
+
+<link rel="canonical" href="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/01/22/Mecab%20in%20Windows/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Windows環境上のAnacondaにMecabのユーザー辞書とNEologd辞書のインストール | LittleVoice-g-string</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Jorey-s-Blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LittleVoice-g-string</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">苦しむために生きないであなた自身を愛してくれ</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/Jorey-s-Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/Jorey-s-Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/Jorey-s-Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/Jorey-s-Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/01/22/Mecab%20in%20Windows/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Jorey-s-Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Jorey">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LittleVoice-g-string">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows環境上のAnacondaにMecabのユーザー辞書とNEologd辞書のインストール
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-22 01:31:20" itemprop="dateCreated datePublished" datetime="2021-01-22T01:31:20+09:00">2021-01-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-01-24 17:19:39" itemprop="dateModified" datetime="2021-01-24T17:19:39+09:00">2021-01-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/Jorey-s-Blog/categories/%E6%97%A5%E3%80%85%E3%81%AE%E7%A9%8D%E3%81%BF%E4%B8%8A%E3%81%92/" itemprop="url" rel="index"><span itemprop="name">日々の積み上げ</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>4.5k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>4 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><font size=2><strong>本記事では、MeCabとは、公式サイトからダウンロードしてきたMeCabのことを言う、Anaconda上のMeCabはAnaconda上でダウンロードしてきたMeCabを指します。</strong></font></p>
+<font size=3>
+
+<blockquote>
+<p>1)ネット上色々記事を参考してましたが、ほぼBoW環境をもとに紹介されています。<br>2)Windows環境+Anaconda(Python3.7)上では、下記記事の記載されている通り実行したらうまく行けましたので、メモとして残したいと思います。</p>
+</blockquote>
+</font>
+<font size=4.5>
+
+<p><a target="_blank" rel="noopener" href="http://qd-suriken.com/2020/04/22/widows%E3%81%A7mecabneologd/"><strong>WindowsでMeCab+NEologdをインストールする</strong></a></p>
+</font>
+
+<a id="more"></a>
+<hr>
+<!-- toc -->
+<hr>
+<h3 id="1-MeCabをインストールする"><a href="#1-MeCabをインストールする" class="headerlink" title="1.MeCabをインストールする"></a>1.MeCabをインストールする</h3><blockquote>
+<p>1)Jupyter上でpip install mecab-python3ではなく、公式サイトからMeCabをダウンロード、インストールすることです。<br>2)公式サイト：<a target="_blank" rel="noopener" href="http://taku910.github.io/mecab/#download">Mecab/download</a><br>3)自分はBinary package for MS-Windowsをダウンロードしております。</p>
+</blockquote>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/mecab_download.png" class="" title="mecab_download"></div>
+
+<blockquote>
+<p>4)インストーラの案内通りでインストールを行えばいいですが、辞書の文字コードの選び(自分は<strong>utf-8</strong>)とインストーラ先の指定(自分は<strong>C:\Program Files (x86)\MeCab</strong>)は後ほど参考になるので、一旦覚えといたほうがいいと思います。<br>5)インストールしたら、C:\Program Files (x86)\MeCab\dic\ipadicにchar.bin、dicrc、matrix.bin、sys.dic、unk.dicというファイルが有れば問題がないかと思います。</p>
+</blockquote>
+<h3 id="2-環境変数のPATHに追加"><a href="#2-環境変数のPATHに追加" class="headerlink" title="2.環境変数のPATHに追加"></a>2.環境変数のPATHに追加</h3><blockquote>
+<p>C:\Program Files (x86)\MeCab\binを環境変数のPATHに追加します。</p>
+</blockquote>
+<h3 id="3-Anaconda-jupyter上のmecabをインストールする"><a href="#3-Anaconda-jupyter上のmecabをインストールする" class="headerlink" title="3.Anaconda jupyter上のmecabをインストールする"></a>3.Anaconda jupyter上のmecabをインストールする</h3><p>以下いくつかの方法どれでも行けると思います。</p>
+<blockquote>
+<p>pip install mecab<br>pip install mecab-python-windows(python3.7&amp;以前のバージョン)<br>pip install mecab-python3(python3.8のバージョン)</p>
+</blockquote>
+<h3 id="4-libmecab-dll（必須ではないかも）"><a href="#4-libmecab-dll（必須ではないかも）" class="headerlink" title="4.libmecab.dll（必須ではないかも）"></a>4.libmecab.dll（必須ではないかも）</h3><blockquote>
+<p>1)MeCabのインストール先のlibmecab.dll(自分は<strong>C:\Program Files (x86)\MeCab\bin\libmecab.dll</strong>)を(Anacondaのインストール先)/Lib/site-packages(自分のは<strong>D:\anaconda\envs\mecab\Lib\site-packages</strong>)にコピーする<br>2)ただ偶然にsite-packages内のlibmecab.dllを削除したとしても、特にエラー生じてなかったので、このステップいらないかもしれないですね。</p>
+</blockquote>
+<h3 id="5-NEologd辞書の登録"><a href="#5-NEologd辞書の登録" class="headerlink" title="5.NEologd辞書の登録"></a>5.NEologd辞書の登録</h3><h4 id="A-NEologdのダウンロード"><a href="#A-NEologdのダウンロード" class="headerlink" title="A.NEologdのダウンロード"></a>A.NEologdのダウンロード</h4><blockquote>
+<p>1)<a href="https://github.com/neologd/mecab-ipadic-neologd">NEologd</a><br>2)ダウンロードできたNEologdに(\mecab-ipadic-neologd\seed)いくつかのcsv圧縮ファイルがあります。<br>3)csvの圧縮ファイルを解凍します。</p>
+</blockquote>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/NEologd_xz.png" class="" title="NEologd_xz"></div>
+
+<blockquote>
+<p>csvファイルの解凍は色々方法がありますが、自分は以下の方法で行いました。</p>
+</blockquote>
+<pre><code>import lzma
+import shutil
+import os
+
+files = []
+for root,dirs,file in os.walk(r&#39;〇〇\MeCab\mecab-ipadic-neologd\seed&#39;): #csv.xz所在しているファイルのディレクトリ
+    files.append(file)
+for i in files[0]:
+input_file = &#39;./mecab-ipadic-neologd/seed/&#39;+i
+destination_dir = &#39;C:/Users/jorey/python/&#39;
+with lzma.open(input_file,&#39;rb&#39;) as readfile:
+    with open(destination_dir+i.split(&#39;.xz&#39;)[0],&#39;wb&#39;) as writefile:
+        data = readfile.read()
+        while data:
+            writefile.write(data)
+            data = readfile.read()</code></pre>
+<div style="width:40%;margin:auto"><img src="/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/NEologd_xz_csv.png" class="" title="NEologd_xz_csv"></div>
+
+<h4 id="B-NEologd辞書の登録"><a href="#B-NEologd辞書の登録" class="headerlink" title="B.NEologd辞書の登録"></a>B.NEologd辞書の登録</h4><blockquote>
+<p>1)Anaconda Promptを開き、＞activate mecab（mecabはAnaconda上で使用している環境の名前です。）を打って、Anaconda環境に入る<br>2)csvファイル所在しているフォルダに移動（自分のは<strong>C:\Users\〇〇Desktop\MeCab\dic\mecab-ipadic-neologd\seed</strong>です）<br>3)以下のコードを打つと、csvファイルをdic辞書に作成する</p>
+<blockquote>
+<p>1_:C:\Program Files (x86)\MeCab\bin\mecab-dict-index.exeはdic辞書を作成するためのtool<br>2_:C:\Program Files (x86)\MeCab\dic\ipadicはMecab上インストールしたらデフォルトあるファルダ<br>3_:〇〇.dic 〇〇.csvはどういうcsvファイルをdic辞書に作成するかを指定する<br>4_:-f utf-8 はcsvファイルの文字コード　(NEologd辞書のcsvを解凍したらutf-8になるので、ここもutf-8に指定しました)<br>5_:-t utf-8 は辞書ファイルの文字コード（Mecabインストールするとき自分はutf-8を選んだので、ここutf-8に指定しました）<br>6_:簡単にまとめていうと、【mecab-dict-index -f &lt;csvファイルの文字コード&gt; -t &lt;辞書ファイルの文字コード&gt;】のイメージですね</p>
+</blockquote>
+</blockquote>
+<pre><code>&quot;C:\Program Files (x86)\MeCab\bin\mecab-dict-index.exe&quot; -d “C:\Program Files (x86)\MeCab\dic\ipadic” -u 〇〇.dic -f utf-8 -t utf-8 〇〇.csv</code></pre>
+<blockquote>
+<p>4)C:\Program Files (x86)\MeCab\dicの下にNEologdのフォルダを作成する。<br>上記作成できた〇〇.dic辞書(例：mecab-user-dict-seed.20200910.dic)をC:\Program Files (x86)\MeCab\dic\NEologdに入れる。</p>
+</blockquote>
+<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/NEologd_dic.png" class="" title="NEologd_dic"></div>
+
+<h4 id="C-mecabrcを修正"><a href="#C-mecabrcを修正" class="headerlink" title="C.mecabrcを修正"></a>C.mecabrcを修正</h4><blockquote>
+<p>1)C:\Program Files (x86)\MeCab\etc内のmecabrcを開き、以下2行を追加します。(;と空白なし)<br>2)デフォルトのあるdicdirとuserdicの2行を消すか、行頭に;を消せればいいと思います。<br>3)userdic複数追加したい場合、’,’を使って複数追加すれば大丈夫です。    </p>
+</blockquote>
+<pre><code>; dicdir =  $(rcpath)\..\dic\ipadic
+; userdic = /home/foo/bar/user.dic
+dicdir = C:\Program Files (x86)\MeCab\dic\ipadic　
+userdic = C:\Program Files (x86)\MeCab\dic\NEologd\mecab-user-dict-seed.20200910.dic #生成したdicファイルのディレクトリ
+#複数追加したい場合
+userdic = C:\Program Files (x86)\MeCab\dic\NEologd\mecab-user-dict-seed.20200910.dic,C:\Program Files (x86)\MeCab\dic\NEologd\neologd-adjective-exp-dict-seed.20151126.dic</code></pre>
+<h4 id="D-AnacondaでJupyter-Notebookを開き、確認"><a href="#D-AnacondaでJupyter-Notebookを開き、確認" class="headerlink" title="D.AnacondaでJupyter Notebookを開き、確認"></a>D.AnacondaでJupyter Notebookを開き、確認</h4><blockquote>
+<p>MeCab.Tagger()に”-r C:\Program Files (x86)\MeCab\etc\mecabrc”そのまま入力したら機能しません。</p>
+<blockquote>
+<p>①\はエスケープ文字に認識されてしまうらしいので、\を/または\\に変更する必要あります。<br>②MeCabはディレクトリ内空白が入ってしまうと認識しません.Program Files (x86)Ni空白入ってしまってるので、ここmecabrcをdesktopに移動したら、機能しました。</p>
+</blockquote>
+</blockquote>
+<pre><code>import MeCab
+tagger = MeCab.Tagger(&#39;-r C:/Users/jorey/Desktop/mecabrc&#39;)
+print(tagger.parse(&#39;中島裕翔&#39;))
+##中島裕翔    名詞,固有名詞,人名,一般,*,*,中島裕翔,ナカジマユウト,ナカジマユウト
+EOS</code></pre>
+<h3 id="6-ユーザー辞書の登録"><a href="#6-ユーザー辞書の登録" class="headerlink" title="6.ユーザー辞書の登録"></a>6.ユーザー辞書の登録</h3><h4 id="A-ユーザー辞書の作成"><a href="#A-ユーザー辞書の作成" class="headerlink" title="A.ユーザー辞書の作成"></a>A.ユーザー辞書の作成</h4><blockquote>
+<p>ユーザー辞書の作成に関しては、こちらの記事では細かく記載しましたので、結構参考になりました。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://taku910.github.io/mecab/dic.html">エントリのフォーマット (活用しない語)</a><br><a target="_blank" rel="noopener" href="https://ameblo.jp/lucifep2525/entry-12406376509.html">Windows環境でMeCabのユーザ辞書に単語を追加する</a></p>
+</blockquote>
+</blockquote>
+<pre><code>表層形,左文脈ID,右文脈ID,コスト,品詞,品詞細分類1,品詞細分類2,品詞細分類3,活用型,活用形,原形,読み,発音
+#自分の:
+何度も,*,*,20,名詞,固有名詞,名詞,*,*,*,何度も,ナンドモ,ナンドモ
+風息,*,*,20,名詞,固有名詞,人名,一般,*,*,風息,フーシー,フーシー</code></pre>
+<blockquote>
+<p>保存するとき、文字コードの選びは後ほどdict作成するとき必要があるので、メモしといたほうがいいと思います。</p>
+</blockquote>
+<div style="width:50%;margin:auto"><img src="/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/user_foo.png" class="" title="user_foo"></div>
+
+<h4 id="B-ユーザー辞書csvからユーザー辞書dicに作成する"><a href="#B-ユーザー辞書csvからユーザー辞書dicに作成する" class="headerlink" title="B.ユーザー辞書csvからユーザー辞書dicに作成する"></a>B.ユーザー辞書csvからユーザー辞書dicに作成する</h4><blockquote>
+<p>やり方は<strong>5.NEologd辞書の登録&gt;B.NEologd辞書の登録</strong>と一緒です。</p>
+</blockquote>
+<pre><code>&quot;C:\Program Files (x86)\MeCab\bin\mecab-dict-index.exe&quot; -d “C:\Program Files (x86)\MeCab\dic\ipadic” -u foo.dic -f utf-8 -t utf-8 foo.csv</code></pre>
+<div style="width:50%;margin:auto"><img src="/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/foo_dic.png" class="" title="foo_dic"></div>
+
+<h4 id="C-mecabrcにパス追加"><a href="#C-mecabrcにパス追加" class="headerlink" title="C.mecabrcにパス追加"></a>C.mecabrcにパス追加</h4><blockquote>
+<p>やり方は<strong>5.NEologd辞書の登録&gt;C.mecabrcを修正</strong>と一緒です。</p>
+</blockquote>
+<pre><code>; dicdir =  $(rcpath)\..\dic\ipadic
+; userdic = /home/foo/bar/user.dic
+
+dicdir = C:\Program Files (x86)\MeCab\dic\ipadic-utf8
+userdic = C:\Program Files (x86)\MeCab\dic\NEologd\mecab-user-dict-seed.20200910.dic,C:\Program Files (x86)\MeCab\dic\userdic\foo.dic</code></pre>
+<h3 id="7-Anacondaで確認"><a href="#7-Anacondaで確認" class="headerlink" title="7.Anacondaで確認"></a>7.Anacondaで確認</h3><blockquote>
+<p>こうしてAnaconda上でも登録したNEologd辞書とユーザー辞書が反映されたと確認できました。<br>こちらを用いて、色々の自然言語処理にて活用したいと思います。</p>
+</blockquote>
+<div style="width:60%;margin:auto"><img src="/Jorey-s-Blog/2021/01/22/Mecab%20in%20Windows/jupyter_end.png" class="" title="jupyter_end"></div>
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://twitter.com/joreyooooolo">
+            <span class="icon">
+              <i class="fab fa-twitter"></i>
+            </span>
+
+            <span class="label">Twitter</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Jorey-s-Blog/tags/%E8%87%AA%E7%84%B6%E8%A8%80%E8%AA%9E%E5%87%A6%E7%90%86/" rel="tag"># 自然言語処理</a>
+              <a href="/Jorey-s-Blog/tags/MeCab/" rel="tag"># MeCab</a>
+              <a href="/Jorey-s-Blog/tags/%E4%BB%96%E4%BA%BA%E8%A8%98%E4%BA%8B%E5%8F%82%E7%85%A7/" rel="tag"># 他人記事参照</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Jorey-s-Blog/2021/01/16/05_paddlehub/" rel="prev" title="paddlepaddleを使って写真の背景を切り捨てる">
+      <i class="fa fa-chevron-left"></i> paddlepaddleを使って写真の背景を切り捨てる
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/" rel="next" title="Pythonによる自動化">
+      Pythonによる自動化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1EphGUoLq3zryN" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-MeCab%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B"><span class="nav-text">1.MeCabをインストールする</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%92%B0%E5%A2%83%E5%A4%89%E6%95%B0%E3%81%AEPATH%E3%81%AB%E8%BF%BD%E5%8A%A0"><span class="nav-text">2.環境変数のPATHに追加</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Anaconda-jupyter%E4%B8%8A%E3%81%AEmecab%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B"><span class="nav-text">3.Anaconda jupyter上のmecabをインストールする</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-libmecab-dll%EF%BC%88%E5%BF%85%E9%A0%88%E3%81%A7%E3%81%AF%E3%81%AA%E3%81%84%E3%81%8B%E3%82%82%EF%BC%89"><span class="nav-text">4.libmecab.dll（必須ではないかも）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-NEologd%E8%BE%9E%E6%9B%B8%E3%81%AE%E7%99%BB%E9%8C%B2"><span class="nav-text">5.NEologd辞書の登録</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-NEologd%E3%81%AE%E3%83%80%E3%82%A6%E3%83%B3%E3%83%AD%E3%83%BC%E3%83%89"><span class="nav-text">A.NEologdのダウンロード</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-NEologd%E8%BE%9E%E6%9B%B8%E3%81%AE%E7%99%BB%E9%8C%B2"><span class="nav-text">B.NEologd辞書の登録</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#C-mecabrc%E3%82%92%E4%BF%AE%E6%AD%A3"><span class="nav-text">C.mecabrcを修正</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#D-Anaconda%E3%81%A7Jupyter-Notebook%E3%82%92%E9%96%8B%E3%81%8D%E3%80%81%E7%A2%BA%E8%AA%8D"><span class="nav-text">D.AnacondaでJupyter Notebookを開き、確認</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E8%BE%9E%E6%9B%B8%E3%81%AE%E7%99%BB%E9%8C%B2"><span class="nav-text">6.ユーザー辞書の登録</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#A-%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E8%BE%9E%E6%9B%B8%E3%81%AE%E4%BD%9C%E6%88%90"><span class="nav-text">A.ユーザー辞書の作成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E8%BE%9E%E6%9B%B8csv%E3%81%8B%E3%82%89%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E8%BE%9E%E6%9B%B8dic%E3%81%AB%E4%BD%9C%E6%88%90%E3%81%99%E3%82%8B"><span class="nav-text">B.ユーザー辞書csvからユーザー辞書dicに作成する</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#C-mecabrc%E3%81%AB%E3%83%91%E3%82%B9%E8%BF%BD%E5%8A%A0"><span class="nav-text">C.mecabrcにパス追加</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Anaconda%E3%81%A7%E7%A2%BA%E8%AA%8D"><span class="nav-text">7.Anacondaで確認</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jorey"
+      src="/Jorey-s-Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jorey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/Jorey-s-Blog/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/Jorey-s-Blog/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/Jorey-s-Blog/tags/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/7546836811" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;7546836811" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/joreyooooolo" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;joreyooooolo" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jorey</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">Symbols count total: </span>
+    <span title="Symbols count total">67k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    <span title="Reading time total">1:01</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/Jorey-s-Blog/lib/anime.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/pjax/pjax.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/velocity/velocity.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/Jorey-s-Blog/js/utils.js"></script>
+
+<script src="/Jorey-s-Blog/js/motion.js"></script>
+
+
+<script src="/Jorey-s-Blog/js/schemes/muse.js"></script>
+
+
+<script src="/Jorey-s-Blog/js/next-boot.js"></script>
+
+<script src="/Jorey-s-Blog/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

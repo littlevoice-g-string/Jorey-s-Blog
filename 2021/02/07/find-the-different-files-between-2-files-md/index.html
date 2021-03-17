@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  #<!--pjax：防止跳转页面音乐暂停-->
+  <script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/Jorey-s-Blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Jorey-s-Blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Jorey-s-Blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/Jorey-s-Blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/Jorey-s-Blog/css/main.css">
+
+
+<link rel="stylesheet" href="/Jorey-s-Blog/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"github.com","root":"/Jorey-s-Blog/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":true,"dimmer":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="1.課題 一つの圧縮ファイルを解凍して、2つのフォルダを得た。 A_fullフォルダ:エラーなく解凍でき、ファイル紛失のないフォルダ B_errorフォルダ:途中エラーが出てしまい、一部ファイルが紛失してしまったフォルダ   この2つのフォルダにそれぞれ８つのサブフォルダがあり、サブフォルダ名は以下の対応関係である。 A_full:20210201 ~ B_error:a1 A_full:20">
+<meta property="og:type" content="article">
+<meta property="og:title" content="find the different files between 2 folders">
+<meta property="og:url" content="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/02/07/find-the-different-files-between-2-files-md/index.html">
+<meta property="og:site_name" content="LittleVoice-g-string">
+<meta property="og:description" content="1.課題 一つの圧縮ファイルを解凍して、2つのフォルダを得た。 A_fullフォルダ:エラーなく解凍でき、ファイル紛失のないフォルダ B_errorフォルダ:途中エラーが出てしまい、一部ファイルが紛失してしまったフォルダ   この2つのフォルダにそれぞれ８つのサブフォルダがあり、サブフォルダ名は以下の対応関係である。 A_full:20210201 ~ B_error:a1 A_full:20">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/A_full.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/B_error.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/20210201.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/a1.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/new.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/new_20210201.png">
+<meta property="article:published_time" content="2021-02-07T12:42:31.000Z">
+<meta property="article:modified_time" content="2021-02-07T15:40:54.560Z">
+<meta property="article:author" content="Jorey">
+<meta property="article:tag" content="自動化">
+<meta property="article:tag" content="ファイル操作">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/A_full.png">
+
+<link rel="canonical" href="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/02/07/find-the-different-files-between-2-files-md/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>find the different files between 2 folders | LittleVoice-g-string</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/Jorey-s-Blog/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">LittleVoice-g-string</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">苦しむために生きないであなた自身を愛してくれ</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/Jorey-s-Blog/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/Jorey-s-Blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/Jorey-s-Blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/Jorey-s-Blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/02/07/find-the-different-files-between-2-files-md/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/Jorey-s-Blog/images/avatar.jpg">
+      <meta itemprop="name" content="Jorey">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LittleVoice-g-string">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          find the different files between 2 folders
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-02-07 21:42:31" itemprop="dateCreated datePublished" datetime="2021-02-07T21:42:31+09:00">2021-02-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-02-08 00:40:54" itemprop="dateModified" datetime="2021-02-08T00:40:54+09:00">2021-02-08</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/Jorey-s-Blog/categories/python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">pythonによる自動化</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>8.1k</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>7 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <!-- toc -->
+<hr>
+<h3 id="1-課題"><a href="#1-課題" class="headerlink" title="1.課題"></a>1.課題</h3><ul>
+<li>一つの圧縮ファイルを解凍して、2つのフォルダを得た。<ul>
+<li>A_fullフォルダ:エラーなく解凍でき、ファイル紛失のないフォルダ</li>
+<li>B_errorフォルダ:途中エラーが出てしまい、一部ファイルが紛失してしまったフォルダ</li>
+</ul>
+</li>
+<li>この2つのフォルダにそれぞれ８つのサブフォルダがあり、サブフォルダ名は以下の対応関係である。<ul>
+<li>A_full:20210201 ~ B_error:a1</li>
+<li>A_full:20210202 ~ B_error:a10</li>
+<li>A_full:20210203 ~ B_error:a11</li>
+<li>A_full:20210204 ~ B_error:a2</li>
+<li>A_full:20210205 ~ B_error:a</li>
+<li>A_full:20210206 ~ B_error:A1</li>
+<li>A_full:20210207 ~ B_error:A19</li>
+<li>A_full:20210208 ~ B_error:S<table>
+<thead>
+<tr>
+<th>A_full</th>
+<th>B_error</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/A_full.png" class="" title="A_full"></div></td>
+<td><div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/B_error.png" class="" title="B_error"></div></td>
+</tr>
+</tbody></table>
+<a id="more"></a></li>
+</ul>
+</li>
+<li>フォルダ内のファイル名はそれぞれ一致している。<ul>
+<li>20210201<div style="width:50%;margin:auto"><img src="/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/20210201.png" class="" width="20210201"></div></li>
+<li>a1<div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/a1.png" class="" title="a1"></div></li>
+</ul>
+</li>
+<li>探しだしたファイルをフォルダごとに格納する、以下の通りになってほしい。<table>
+<thead>
+<tr>
+<th>フォルダ構造</th>
+<th>20210201-a1後の結果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><div style="width:70%;margin:auto"><img src="/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/new.png" class="" title="new"></div></td>
+<td><div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/02/07/find-the-different-files-between-2-files-md/new_20210201.png" class="" title="new_20210201"></div></td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<h3 id="2-A-fullとB-error内のファイル名をマッチする"><a href="#2-A-fullとB-error内のファイル名をマッチする" class="headerlink" title="2.A_fullとB_error内のファイル名をマッチする"></a>2.A_fullとB_error内のファイル名をマッチする</h3><div id="kk_full">
+
+<blockquote>
+<p>まずA_fullとB_errorのパスを用意する</p>
+</blockquote>
+</div>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">kk_full&#x3D;[k for k,w,t in os.walk(&#39;.&#x2F;A_full&#39;)]</span><br><span class="line">ww_full&#x3D;[w for k,w,t in os.walk(&#39;.&#x2F;A_full&#39;)]</span><br><span class="line">tt_full&#x3D;[t for k,w,t in os.walk(&#39;.&#x2F;A_full&#39;)]</span><br><span class="line"></span><br><span class="line">kk_error&#x3D;[k for k,w,t in os.walk(&#39;.&#x2F;B_error&#39;)]</span><br><span class="line">ww_error&#x3D;[w for k,w,t in os.walk(&#39;.&#x2F;B_error&#39;)]</span><br><span class="line">tt_error&#x3D;[t for k,w,t in os.walk(&#39;.&#x2F;B_error&#39;)]</span><br><span class="line"></span><br><span class="line">kk_full</span><br><span class="line">#[&#39;.&#x2F;A_full&#39;,</span><br><span class="line"> &#39;.&#x2F;A_full\\20210201&#39;,</span><br><span class="line"> &#39;.&#x2F;A_full\\20210202&#39;,</span><br><span class="line"> &#39;.&#x2F;A_full\\20210203&#39;,</span><br><span class="line"> &#39;.&#x2F;A_full\\20210204&#39;,</span><br><span class="line"> &#39;.&#x2F;A_full\\20210205&#39;,</span><br><span class="line"> &#39;.&#x2F;A_full\\20210206&#39;,</span><br><span class="line"> &#39;.&#x2F;A_full\\20210207&#39;,</span><br><span class="line"> &#39;.&#x2F;A_full\\20210208&#39;]</span><br><span class="line"></span><br><span class="line">file_name_full &#x3D; [kk_full[i].split(&#39;&#x2F;&#39;)[-1].split(&#39;\\&#39;)[-1] for i in range(1,len(kk_full))]</span><br><span class="line">file_name_error &#x3D; [kk_error[i].split(&#39;&#x2F;&#39;)[-1].split(&#39;\\&#39;)[-1] for i in range(1,len(kk_error))]</span><br><span class="line"></span><br><span class="line">file_name_error</span><br><span class="line">#[&#39;a&#39;, &#39;A1&#39;, &#39;a1&#39;, &#39;a10&#39;, &#39;a11&#39;, &#39;A19&#39;, &#39;a2&#39;, &#39;S&#39;]</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>並び替えルールを定義する(<code>＠ながた</code>さんに感謝！)<br>考え方としては、A,a,SをすべてUnicode値に変換することによって、順位を人為的に付けさせる。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">def rank_filename(value):</span><br><span class="line">    if len(value) &lt;&#x3D; 1:</span><br><span class="line">        for i in count():</span><br><span class="line">            try:</span><br><span class="line">                _ &#x3D; chr(i)</span><br><span class="line">            except ValueError:</span><br><span class="line">                max_char_number &#x3D; i-1</span><br><span class="line">                break</span><br><span class="line">        left,right &#x3D; value.lower(),chr(max_char_number)    </span><br><span class="line">    else:</span><br><span class="line">        left,right &#x3D; value[0],&#39;&#39;.join(list(value)[1:])</span><br><span class="line">        #A-Zのほうがa-zより小さいので、それを入れ替える</span><br><span class="line">        left_after &#x3D; &#39;&#39;</span><br><span class="line">        for c in left:</span><br><span class="line">            if &#39;a&#39; &lt;&#x3D; c &lt;&#x3D; &#39;z&#39;:</span><br><span class="line">                left_after +&#x3D; chr(ord(&#39;A&#39;)+(ord(c)-(ord(&#39;a&#39;)))+5)</span><br><span class="line">            elif &#39;A&#39; &lt;&#x3D; c &lt;&#x3D; &#39;Z&#39;:</span><br><span class="line">                left_after +&#x3D; chr(ord(&#39;a&#39;)+(ord(c)-(ord(&#39;A&#39;)))+5)</span><br><span class="line">            else:</span><br><span class="line">                left_after +&#x3D; c</span><br><span class="line">        left &#x3D; left_after      </span><br><span class="line">    return left,right</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>定義したrank_filename関数をsortのkeyに応用する。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">file_name_sort &#x3D; sorted(file_name_error,key&#x3D;rank_filename)</span><br><span class="line">file_name_sort</span><br><span class="line">#[&#39;a1&#39;, &#39;a10&#39;, &#39;a11&#39;, &#39;a2&#39;, &#39;a&#39;, &#39;A1&#39;, &#39;A19&#39;, &#39;S&#39;]</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>参考①A,a,S,-などのUnicode値は以下の通りである。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ord(&#39;A&#39;),ord(&#39;S&#39;),ord(&#39;a&#39;),ord(&#39;s&#39;),ord(&#39;-&#39;)</span><br><span class="line">#(65, 83, 97, 115, 45)</span><br></pre></td></tr></table></figure>
+<h3 id="3-すべてのファイルのフルパスを取得する"><a href="#3-すべてのファイルのフルパスを取得する" class="headerlink" title="3.すべてのファイルのフルパスを取得する"></a>3.すべてのファイルのフルパスを取得する</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">folder_path_sorted &#x3D; [&#39;.&#x2F;B_error&#x2F;&#39;+i for i in file_name_sort]</span><br><span class="line">folder_path_full &#x3D; [&#39;.&#x2F;A_full&#x2F;&#39;+i for i in file_name_full]</span><br><span class="line"></span><br><span class="line">def make_full_path(list_):</span><br><span class="line">    full_path &#x3D; []</span><br><span class="line">    for i in list_:</span><br><span class="line">        for v,k,m in os.walk(i):</span><br><span class="line">            path_tmp &#x3D; [os.path.join(v,x) for x in m]</span><br><span class="line">            full_path.append(path_tmp)</span><br><span class="line">    return full_path</span><br><span class="line"></span><br><span class="line">full_path_sorted &#x3D; make_full_path(folder_path_sorted)</span><br><span class="line">full_path_all &#x3D; make_full_path(folder_path_full)</span><br><span class="line"></span><br><span class="line">full_path_sorted[7][0]</span><br><span class="line">#&#39;.&#x2F;B_error&#x2F;S\\全員に１レッスンプレゼント！仙台校移転記念♪トライアルキャンペーン開催！！.eml&#39;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>念の為、BフォルダとAフォルダの対応関係を一つの辞書に格納した。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">file_path_dict&#x3D;dict(zip(folder_path_sorted,folder_path_full))</span><br><span class="line">file_path_dict</span><br><span class="line">#&#123;&#39;.&#x2F;B_error&#x2F;a1&#39;: &#39;.&#x2F;A_full&#x2F;20210201&#39;,</span><br><span class="line"> &#39;.&#x2F;B_error&#x2F;a10&#39;: &#39;.&#x2F;A_full&#x2F;20210202&#39;,</span><br><span class="line"> &#39;.&#x2F;B_error&#x2F;a11&#39;: &#39;.&#x2F;A_full&#x2F;20210203&#39;,</span><br><span class="line"> &#39;.&#x2F;B_error&#x2F;a2&#39;: &#39;.&#x2F;A_full&#x2F;20210204&#39;,</span><br><span class="line"> &#39;.&#x2F;B_error&#x2F;a&#39;: &#39;.&#x2F;A_full&#x2F;20210205&#39;,</span><br><span class="line"> &#39;.&#x2F;B_error&#x2F;A1&#39;: &#39;.&#x2F;A_full&#x2F;20210206&#39;,</span><br><span class="line"> &#39;.&#x2F;B_error&#x2F;A19&#39;: &#39;.&#x2F;A_full&#x2F;20210207&#39;,</span><br><span class="line"> &#39;.&#x2F;B_error&#x2F;S&#39;: &#39;.&#x2F;A_full&#x2F;20210208&#39;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-1-ファイル名をもとに比較する"><a href="#4-1-ファイル名をもとに比較する" class="headerlink" title="4-1.ファイル名をもとに比較する"></a>4-1.ファイル名をもとに比較する</h3><blockquote>
+<p>一度サブフォルダの順序を変えたので、Bフォルダのパス情報を新たに格納する</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kk_error_sorted&#x3D;[k for i in folder_path_sorted for k,w,t in os.walk(i)]</span><br><span class="line"># ww_sorted&#x3D;[w for i in folder_path_sorted for k,w,t in os.walk(i)]</span><br><span class="line">tt_error_sorted&#x3D;[t for i in folder_path_sorted for k,w,t in os.walk(i)]</span><br></pre></td></tr></table></figure>
+<p><a href="#kk_full">すでに処理済み👇</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">kk_full&#x3D;[k for k,w,t in os.walk(&#39;.&#x2F;A_full&#39;)]</span><br><span class="line">ww_full&#x3D;[w for k,w,t in os.walk(&#39;.&#x2F;A_full&#39;)]</span><br><span class="line">tt_full&#x3D;[t for k,w,t in os.walk(&#39;.&#x2F;A_full&#39;)]</span><br><span class="line"></span><br><span class="line">#フォルダごとの差分を取り出す</span><br><span class="line">list_ &#x3D; [[]]*8</span><br><span class="line">for i in range(len(tt_error_sorted)):</span><br><span class="line">    list_.append(list(set(tt_full[i+1])-set(tt_error_sorted[i])))</span><br><span class="line">list_</span><br><span class="line">[[],</span><br><span class="line"> [],</span><br><span class="line"> [],</span><br><span class="line"> [],</span><br><span class="line"> [],</span><br><span class="line"> [],</span><br><span class="line"> [],</span><br><span class="line"> [],</span><br><span class="line"> [&#39;Nintendo Switch『モンスターハンターライズ』の最新映像が公開。 _ トピックス _ Nintendo.html&#39;,</span><br><span class="line">  &#39;The savings are clear.eml&#39;,</span><br><span class="line">  &#39;【Nintendo Switch】期間限定セール・新作ほか、ソフトのご紹介.eml&#39;],</span><br><span class="line"> [&#39;Your question of the week from Vocabulary.com.eml&#39;,</span><br><span class="line">  &#39;東京2020大会：オリンピック＆パラリンピックの世界へ.eml&#39;],</span><br><span class="line"> [&#39;新年のご挨拶.eml&#39;, &#39;もっちもっちの弾力に、脈打つ熟成香。魅惑のブランデーあんぱん.eml&#39;],</span><br><span class="line"> [&#39;ソフトウェアを安全に保護するためのより良い方法.eml&#39;,</span><br><span class="line">  &#39;ゴーストライター騒動から7年 新垣隆の「覚悟」.eml&#39;,</span><br><span class="line">  &#39;Communication trends of 2020.eml&#39;],</span><br><span class="line"> [&#39;東京2020大会：オリンピック＆パラリンピックの世界を知り尽くそう.eml&#39;, &#39;宇賀なつみ、思わず息をのむ.eml&#39;],</span><br><span class="line"> [&#39;深度学习之路（一）：用LSTM网络做时间序列数据预测 - 简书.html&#39;],</span><br><span class="line"> [&#39;Our cool-productivity-killer newsletter.eml&#39;],</span><br><span class="line"> [&#39;明智光秀、最後の夜は…….eml&#39;]]</span><br><span class="line"></span><br><span class="line"> dict_path &#x3D; dict(zip(kk_full[1:],list_[8:]))</span><br></pre></td></tr></table></figure>
+<h3 id="4-2-差分のファイルを新しくフォルダごとに保存する"><a href="#4-2-差分のファイルを新しくフォルダごとに保存する" class="headerlink" title="4-2.差分のファイルを新しくフォルダごとに保存する"></a>4-2.差分のファイルを新しくフォルダごとに保存する</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">save_dir&#x3D;&#39;.&#x2F;new&#x2F;&#39;</span><br><span class="line">if not os.path.isdir(save_dir):</span><br><span class="line">    os.makedirs(save_dir)</span><br><span class="line"></span><br><span class="line">for i in kk_full[1:]:</span><br><span class="line">#     print(i.split(&#39;&#x2F;&#39;)[1].split(&#39;\\&#39;)[1])</span><br><span class="line">    for m in dict_path[i]:</span><br><span class="line">        from_path &#x3D; os.path.join(i,m)</span><br><span class="line">#         print(from_path)</span><br><span class="line">        to_path &#x3D; os.path.join(save_dir,i.split(&#39;&#x2F;&#39;)[1].split(&#39;\\&#39;)[1])</span><br><span class="line">        if not os.path.isdir(to_path):</span><br><span class="line">            os.makedirs(to_path)</span><br><span class="line">        copy(from_path,to_path)</span><br></pre></td></tr></table></figure>
+<h3 id="5-1-内容ともとに比較する"><a href="#5-1-内容ともとに比較する" class="headerlink" title="5-1.内容ともとに比較する"></a>5-1.内容ともとに比較する</h3><blockquote>
+<p>今回のファイルにはeml,html(サンプルにはないけど、ほんとはmsgファイルも)が入っているため、以下の内容抽出するための関数を作成した。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">def extract_text(list_):</span><br><span class="line">    text &#x3D; []</span><br><span class="line">    file_id &#x3D; []</span><br><span class="line">    for i in list_:</span><br><span class="line">        if i.split(&#39;.&#39;)[-1] &#x3D;&#x3D; &#39;eml&#39;:</span><br><span class="line">            file_id.append(i)</span><br><span class="line">            with open(i,&#39;r&#39;,encoding &#x3D; &#39;utf-8-sig&#39;) as f:</span><br><span class="line">                text_ &#x3D; f.read()</span><br><span class="line">                text.append(text_)</span><br><span class="line">#                 print(&#39;extracted&#39;,i)</span><br><span class="line">        elif i.split(&#39;.&#39;)[-1] &#x3D;&#x3D; &#39;msg&#39;:</span><br><span class="line">            file_id.append(i)</span><br><span class="line">            subject &#x3D; extract_msg.Message(i).subject</span><br><span class="line">            date &#x3D; extract_msg.Message(i).date</span><br><span class="line">            body &#x3D; extract_msg.Message(i).body</span><br><span class="line">            text_ &#x3D; subject+date+body</span><br><span class="line">            text.append(text_)</span><br><span class="line">#             print(&#39;extracted&#39;,i)</span><br><span class="line">        elif i.split(&#39;.&#39;)[-1] &#x3D;&#x3D; &#39;html&#39;:</span><br><span class="line">            file_id.append(i)</span><br><span class="line">            htmlfile &#x3D; open(i, &#39;r&#39;, encoding&#x3D;&#39;utf-8-sig&#39;)</span><br><span class="line">            htmlhandle &#x3D; htmlfile.read()</span><br><span class="line">            soup &#x3D; BeautifulSoup(htmlhandle, &#39;html.parser&#39;)</span><br><span class="line">            text.append(soup.text)</span><br><span class="line">#             print(&#39;extracted&#39;,i)</span><br><span class="line">            </span><br><span class="line">#         dict_ &#x3D; dict(zip(file_id,text))</span><br><span class="line">    return file_id,text         </span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>上記関数を使って、フォルダごとの内容を比較し、フルパスを取得する</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">differ_ids&#x3D;[]</span><br><span class="line">for i in range(len(full_path_all)):</span><br><span class="line">    file_id,text_sorted &#x3D;extract_text(full_path_all[i])</span><br><span class="line">    file_id_error,text_error &#x3D;extract_text(full_path_sorted[i])</span><br><span class="line">    dict_ &#x3D; dict(zip(text_sorted,file_id))</span><br><span class="line">    differ_id &#x3D; []</span><br><span class="line">    for m in text_sorted:</span><br><span class="line">        if m not in text_error:</span><br><span class="line">            differ_id.append(dict_[m])</span><br><span class="line">    differ_ids.append(differ_id)</span><br><span class="line"></span><br><span class="line">differ_ids[1]</span><br><span class="line">#[&#39;.&#x2F;A_full&#x2F;20210202\\Your question of the week from Vocabulary.com.eml&#39;,</span><br><span class="line"> &#39;.&#x2F;A_full&#x2F;20210202\\東京2020大会：オリンピック＆パラリンピックの世界へ.eml&#39;]</span><br></pre></td></tr></table></figure>
+<h3 id="5-2-差分を保存する"><a href="#5-2-差分を保存する" class="headerlink" title="5-2.差分を保存する"></a>5-2.差分を保存する</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">save_dir&#x3D;&#39;.&#x2F;new&#39;</span><br><span class="line">if not os.path.isdir(save_dir):</span><br><span class="line">    os.makedirs(save_dir)</span><br><span class="line">for i in differ_ids:</span><br><span class="line">    for m in i:</span><br><span class="line">#         print(m.split(&#39;&#x2F;&#39;)[2].split(&#39;\\&#39;)[0])</span><br><span class="line">        to_path &#x3D; os.path.join(save_dir,m.split(&#39;&#x2F;&#39;)[2].split(&#39;\\&#39;)[0])</span><br><span class="line">        if not os.path.isdir(to_path):</span><br><span class="line">            os.makedirs(to_path)</span><br><span class="line">        copy(m,to_path)</span><br></pre></td></tr></table></figure>
+<h3 id="appendix-フォルダ名を変更する"><a href="#appendix-フォルダ名を変更する" class="headerlink" title="appendix フォルダ名を変更する"></a>appendix フォルダ名を変更する</h3><blockquote>
+<p>投げたフォルダ(pathで指定)内のサブフォルダ名をname_listの順序通りに名前を変更させる。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">def rename(path):</span><br><span class="line">    i&#x3D;0</span><br><span class="line">    name_list&#x3D;[&#39;kaggle&#39;,&#39;tableau&#39;,&#39;pytorch&#39;] #自由設定できる</span><br><span class="line">    FileList &#x3D; os.listdir(path)</span><br><span class="line">    for files in FileList:</span><br><span class="line">        oldDirPath &#x3D; os.path.join(path, files)</span><br><span class="line">        if os.path.isdir(oldDirPath):</span><br><span class="line">            rename(oldDirPath)            </span><br><span class="line">            newDirPath&#x3D;os.path.join(path,name_list[i])</span><br><span class="line">            os.rename(oldDirPath, newDirPath)</span><br><span class="line">            print(files +&#39; has changed as &#39;+newDirPath)</span><br><span class="line">            i +&#x3D; 1</span><br></pre></td></tr></table></figure>
+<h3 id="Next"><a href="#Next" class="headerlink" title="Next"></a>Next</h3><ul>
+<li>すでに同じ機能を果たしている無料ツールがあるらしいので、ユーザーが使いやすいため、webツールを作れるといいなと思います。</li>
+<li>今回は単にeml,msg,htmlを読み込んだだけなので、今度細かくテキスト文書を抽出したいと思います。</li>
+</ul>
+<p>21</p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="https://twitter.com/joreyooooolo">
+            <span class="icon">
+              <i class="fab fa-twitter"></i>
+            </span>
+
+            <span class="label">Twitter</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/Jorey-s-Blog/tags/%E8%87%AA%E5%8B%95%E5%8C%96/" rel="tag"># 自動化</a>
+              <a href="/Jorey-s-Blog/tags/%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E6%93%8D%E4%BD%9C/" rel="tag"># ファイル操作</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/Jorey-s-Blog/2021/02/03/markdown%E8%A8%98%E6%B3%95/" rel="prev" title="markdown記法">
+      <i class="fa fa-chevron-left"></i> markdown記法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/Jorey-s-Blog/2021/02/10/%E3%83%91%E3%83%AF%E3%83%9D%E3%82%92%E8%87%AA%E5%8B%95%E9%80%9A%E8%A8%B3%E3%81%99%E3%82%8B/" rel="next" title="パワポを自動翻訳する">
+      パワポを自動翻訳する <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+      <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1EphGUoLq3zryN" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%AA%B2%E9%A1%8C"><span class="nav-text">1.課題</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-A-full%E3%81%A8B-error%E5%86%85%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%90%8D%E3%82%92%E3%83%9E%E3%83%83%E3%83%81%E3%81%99%E3%82%8B"><span class="nav-text">2.A_fullとB_error内のファイル名をマッチする</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E3%81%99%E3%81%B9%E3%81%A6%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E3%83%95%E3%83%AB%E3%83%91%E3%82%B9%E3%82%92%E5%8F%96%E5%BE%97%E3%81%99%E3%82%8B"><span class="nav-text">3.すべてのファイルのフルパスを取得する</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%90%8D%E3%82%92%E3%82%82%E3%81%A8%E3%81%AB%E6%AF%94%E8%BC%83%E3%81%99%E3%82%8B"><span class="nav-text">4-1.ファイル名をもとに比較する</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%B7%AE%E5%88%86%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E6%96%B0%E3%81%97%E3%81%8F%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%94%E3%81%A8%E3%81%AB%E4%BF%9D%E5%AD%98%E3%81%99%E3%82%8B"><span class="nav-text">4-2.差分のファイルを新しくフォルダごとに保存する</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%86%85%E5%AE%B9%E3%81%A8%E3%82%82%E3%81%A8%E3%81%AB%E6%AF%94%E8%BC%83%E3%81%99%E3%82%8B"><span class="nav-text">5-1.内容ともとに比較する</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E5%B7%AE%E5%88%86%E3%82%92%E4%BF%9D%E5%AD%98%E3%81%99%E3%82%8B"><span class="nav-text">5-2.差分を保存する</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#appendix-%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E5%90%8D%E3%82%92%E5%A4%89%E6%9B%B4%E3%81%99%E3%82%8B"><span class="nav-text">appendix フォルダ名を変更する</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Next"><span class="nav-text">Next</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jorey"
+      src="/Jorey-s-Blog/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Jorey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/Jorey-s-Blog/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/Jorey-s-Blog/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/Jorey-s-Blog/tags/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/7546836811" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;7546836811" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/joreyooooolo" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;joreyooooolo" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jorey</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">Symbols count total: </span>
+    <span title="Symbols count total">67k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    <span title="Reading time total">1:01</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/Jorey-s-Blog/lib/anime.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/pjax/pjax.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/velocity/velocity.min.js"></script>
+  <script src="/Jorey-s-Blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/Jorey-s-Blog/js/utils.js"></script>
+
+<script src="/Jorey-s-Blog/js/motion.js"></script>
+
+
+<script src="/Jorey-s-Blog/js/schemes/muse.js"></script>
+
+
+<script src="/Jorey-s-Blog/js/next-boot.js"></script>
+
+<script src="/Jorey-s-Blog/js/bookmark.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>
