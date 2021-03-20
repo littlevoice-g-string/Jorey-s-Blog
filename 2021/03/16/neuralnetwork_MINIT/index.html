@@ -22,15 +22,18 @@
     var CONFIG = {"hostname":"github.com","root":"/Jorey-s-Blog/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":true,"dimmer":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="説明ニューラルネットワークを理解するため、Numpy、keras、Pytorchを使ってMNISTデータセットの手書き数字を識別してみました。  使用しているデータKaggle Digit Recognizer  MNISTデータセットは、機械学習でとても有名なデータセットであり、0から9までの手書き数字のグレースケール画像が入っています。各画像は、縦28X横28合計784ピクセルとなっており、各">
+  <meta name="description" content="説明ニューラルネットワークを理解するため、Numpy、keras、Pytorchを使ってMNISTデータセットの手書き数字を識別してみました。  使用しているデータ Kaggle Digit Recognizer MNISTデータセットは、機械学習でとても有名なデータセットであり、0から9までの手書き数字のグレースケール画像が入っています。各画像は、縦28X横28合計784ピクセルとなっており、各">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NeuralNetwork実践_MNIST">
 <meta property="og:url" content="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/03/16/neuralnetwork_MINIT/index.html">
 <meta property="og:site_name" content="LittleVoice-g-string">
-<meta property="og:description" content="説明ニューラルネットワークを理解するため、Numpy、keras、Pytorchを使ってMNISTデータセットの手書き数字を識別してみました。  使用しているデータKaggle Digit Recognizer  MNISTデータセットは、機械学習でとても有名なデータセットであり、0から9までの手書き数字のグレースケール画像が入っています。各画像は、縦28X横28合計784ピクセルとなっており、各">
+<meta property="og:description" content="説明ニューラルネットワークを理解するため、Numpy、keras、Pytorchを使ってMNISTデータセットの手書き数字を識別してみました。  使用しているデータ Kaggle Digit Recognizer MNISTデータセットは、機械学習でとても有名なデータセットであり、0から9までの手書き数字のグレースケール画像が入っています。各画像は、縦28X横28合計784ピクセルとなっており、各">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/show_num.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/show_values.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/show_labels.png">
 <meta property="article:published_time" content="2021-03-16T12:11:27.000Z">
-<meta property="article:modified_time" content="2021-03-16T14:08:57.466Z">
+<meta property="article:modified_time" content="2021-03-20T08:16:38.847Z">
 <meta property="article:author" content="Jorey">
 <meta property="article:tag" content="機械学習">
 <meta property="article:tag" content="ニューラルネットワーク">
@@ -38,6 +41,7 @@
 <meta property="article:tag" content="Keras">
 <meta property="article:tag" content="Numpy">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/show_num.png">
 
 <link rel="canonical" href="https://github.com/littlevoice-g-string/Jorey-s-Blog.git/2021/03/16/neuralnetwork_MINIT/">
 
@@ -187,10 +191,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2021-03-16 21:11:27 / Modified: 23:08:57" itemprop="dateCreated datePublished" datetime="2021-03-16T21:11:27+09:00">2021-03-16</time>
+              <time title="Created: 2021-03-16 21:11:27" itemprop="dateCreated datePublished" datetime="2021-03-16T21:11:27+09:00">2021-03-16</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-03-20 17:16:38" itemprop="dateModified" datetime="2021-03-20T17:16:38+09:00">2021-03-20</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -214,14 +224,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>1.1k</span>
+              <span>3k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>1 mins.</span>
+              <span>3 mins.</span>
             </span>
 
         </div>
@@ -235,25 +245,36 @@
       
         <h3 id="説明"><a href="#説明" class="headerlink" title="説明"></a>説明</h3><p>ニューラルネットワークを理解するため、Numpy、keras、Pytorchを使ってMNISTデータセットの手書き数字を識別してみました。</p>
 <ul>
-<li>使用しているデータ<br><a target="_blank" rel="noopener" href="https://www.kaggle.com/c/digit-recognizer">Kaggle Digit Recognizer</a></li>
-<li><ul>
+<li>使用しているデータ<ul>
+<li><a target="_blank" rel="noopener" href="https://www.kaggle.com/c/digit-recognizer">Kaggle Digit Recognizer</a></li>
 <li>MNISTデータセットは、機械学習でとても有名なデータセットであり、0から9までの手書き数字のグレースケール画像が入っています。各画像は、縦28X横28合計784ピクセルとなっており、各ピクセルには一つ0から255のピクセル値をついています。そのピクセル値が大きいければ大きいほど暗いことを意味しています。</li>
-</ul>
-</li>
-<li><ul>
 <li>Trainデータに関しては、先頭のlabel列はユーザーが描いた数字を表しており、残りの列は該当画像のピクセル値が格納されています。</li>
-</ul>
-</li>
-<li><ul>
 <li>testデータに関してはTrainデータと同様に、画像のピクセル値が格納していますが、label列がついていないので、それを識別するのは今回のタスクです。</li>
 </ul>
 </li>
+<li>training data,validate dataを用意します。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">data &#x3D; np.array(train)</span><br><span class="line">m,n &#x3D; data.shape</span><br><span class="line">np.random.shuffle(data)</span><br><span class="line"></span><br><span class="line">data_val&#x3D;data[0:1000].T</span><br><span class="line">Y_val &#x3D; data_val[0]</span><br><span class="line">X_val &#x3D; data_val[1:n]</span><br><span class="line">X_val &#x3D; X_val&#x2F;255.</span><br><span class="line">print(data_val.shape,Y_val.shape,X_val.shape)</span><br><span class="line"></span><br><span class="line">data_train &#x3D; data[1000:m].T</span><br><span class="line">Y_train &#x3D; data_train[0]</span><br><span class="line">X_train &#x3D; data_train[1:n]</span><br><span class="line">X_train &#x3D; X_train&#x2F;255.</span><br><span class="line">_,m_train &#x3D; X_train.shape</span><br><span class="line">print(data_train.shape,Y_train.shape,X_train.shape)</span><br><span class="line"></span><br><span class="line">#(785, 1000) (1000,) (784, 1000)</span><br><span class="line">(785, 41000) (41000,) (784, 41000)</span><br></pre></td></tr></table></figure>
+<h3 id="1-EDA"><a href="#1-EDA" class="headerlink" title="1.EDA"></a>1.EDA</h3>まずkaggleからダウンロードしたtrain.csvとtest.csvを読み込んで、データの中身をいろいろ確認してみました。</li>
 </ul>
-<h3 id="1-EDA"><a href="#1-EDA" class="headerlink" title="1.EDA"></a>1.EDA</h3><p>まずkaggleからダウンロードしたtrain.csvとtest.csvを読み込んで、データの中身をいろいろ確認してみました。</p>
-<ol>
-<li>train:42000件訓練データ、label列からpixel784列、すべてint型<br>test:28000件テストデータ、label列なし、pixel0からpixel784列、すべてint型</li>
+<ol start="0">
+<li>モジュールをインポートします。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">import numpy as np</span><br><span class="line">import pandas as pd</span><br><span class="line">import matplotlib.pyplot as plt</span><br><span class="line">import matplotlib.cm as cm</span><br><span class="line">from collections import Counter</span><br><span class="line">from pyg2plot import Plot</span><br><span class="line">from pyecharts.charts import Bar</span><br><span class="line">from pyecharts import options as opts</span><br></pre></td></tr></table></figure></li>
+<li>データ件数<br>train:42000件訓練データ、785列、testデータと違って、label列がついています。<br>test:28000件テストデータ、784列<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">train.shape,test.shape</span><br><span class="line">	#((42000, 785), (28000, 784))</span><br><span class="line"></span><br><span class="line">	for i in train.columns:</span><br><span class="line">	    if i not in test.columns:</span><br><span class="line">	        print(i)</span><br><span class="line">	#label</span><br></pre></td></tr></table></figure></li>
+<li>実際にどういう数字なのか、画像で見てみます。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">num&#x3D;train.iloc[10]</span><br><span class="line">pic&#x3D;np.array(num)</span><br><span class="line">pic&#x3D;pic[1:785]</span><br><span class="line">pic&#x3D;pic.reshape(28,28)</span><br><span class="line">plt.imshow(pic,cmap&#x3D;&quot;magma&quot;)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<div style="width:50%;margin:left"><img src="/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/show_num.png" class="" title="show_num"></div></li>
+<li>全体のvalue値の幅を見てみます。</li>
 </ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">print(train.info())</span><br><span class="line">print(&#39;--&#39;*40)</span><br><span class="line">print(test.info())</span><br><span class="line"></span><br><span class="line">#&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span><br><span class="line">RangeIndex: 42000 entries, 0 to 41999</span><br><span class="line">Columns: 785 entries, label to pixel783</span><br><span class="line">dtypes: int64(785)</span><br><span class="line">memory usage: 251.5 MB</span><br><span class="line">None</span><br><span class="line">----------------------------------------</span><br><span class="line">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span><br><span class="line">RangeIndex: 28000 entries, 0 to 27999</span><br><span class="line">Columns: 784 entries, pixel0 to pixel783</span><br><span class="line">dtypes: int64(784)</span><br><span class="line">memory usage: 167.5 MB</span><br><span class="line">None</span><br></pre></td></tr></table></figure>
+<ul>
+<li>value値は0から255の間に落ちているので、後ほどの前処理ではvalue値を標準化処理にします。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">scatter &#x3D; Plot(&quot;Scatter&quot;)</span><br><span class="line">df_scatter &#x3D; pd.DataFrame(pic.reshape(392,2))</span><br><span class="line">df_scatter_dict &#x3D; df_scatter.to_dict(orient &#x3D; &#39;dict&#39;)</span><br><span class="line">scatter.set_options(</span><br><span class="line">&#123;</span><br><span class="line">    &#39;appendPadding&#39;: 30,</span><br><span class="line">    &#39;data&#39;: df_scatter.to_dict(orient&#x3D;&#39;records&#39;),</span><br><span class="line">    &#39;xField&#39;: 0,</span><br><span class="line">    &#39;yField&#39;: 1,</span><br><span class="line">    &#39;size&#39;: [4, 30],</span><br><span class="line">    &#39;shape&#39;: &#39;circle&#39;,</span><br><span class="line">    &#39;pointStyle&#39;:&#123;&#39;fillOpacity&#39;: 0.8,&#39;stroke&#39;: &#39;#bbb&#39;&#125;,</span><br><span class="line">    &#39;xAxis&#39;:&#123;&#39;line&#39;:&#123;&#39;style&#39;:&#123;&#39;stroke&#39;: &#39;#aaa&#39;&#125;&#125;,&#125;,</span><br><span class="line">    &#39;yAxis&#39;:&#123;&#39;line&#39;:&#123;&#39;style&#39;:&#123;&#39;stroke&#39;: &#39;#aaa&#39;&#125;&#125;,&#125;,</span><br><span class="line">    &#39;quadrant&#39;:&#123;</span><br><span class="line">        &#39;xBaseline&#39;: 0,</span><br><span class="line">        &#39;yBaseline&#39;: 0,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;)</span><br><span class="line">scatter.render()</span><br></pre></td></tr></table></figure>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/show_values.png" class="" title="show_values"></div></li>
+</ul>
+<ol start="4">
+<li>ラベルごとデータの件数を見てみます。</li>
+</ol>
+<ul>
+<li>各ラベルのデータ件数が大きいな差がなく、均等的であることがわかりました。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">bar &#x3D; (</span><br><span class="line">    Bar(init_opts&#x3D;opts.InitOpts(width&#x3D;&quot;620px&quot;, height&#x3D;&quot;420px&quot;))</span><br><span class="line">    .add_xaxis(list(train_count.keys()))</span><br><span class="line">    .add_yaxis(&#39;count&#39;, list(train_count.values()))</span><br><span class="line">    .set_global_opts(title_opts&#x3D;opts.TitleOpts(title&#x3D;&quot;count&quot;, subtitle&#x3D;None))</span><br><span class="line">    .set_global_opts(title_opts&#x3D;&#123;&quot;text&quot;: &quot;count&quot;, &quot;subtext&quot;: None&#125;)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">bar.render_notebook()</span><br></pre></td></tr></table></figure>
+<div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/show_labels.png" class="" title="show_labels"></div>
+
+</li>
+</ul>
 <h3 id="2-Numpyでニューラルネットワークを実装してみました"><a href="#2-Numpyでニューラルネットワークを実装してみました" class="headerlink" title="2.Numpyでニューラルネットワークを実装してみました"></a>2.Numpyでニューラルネットワークを実装してみました</h3><h3 id="3-Kerasでニューラルネットワークを構築てみました"><a href="#3-Kerasでニューラルネットワークを構築てみました" class="headerlink" title="3.Kerasでニューラルネットワークを構築てみました"></a>3.Kerasでニューラルネットワークを構築てみました</h3><h3 id="4-Pytorchでニューラルネットワークを構築してみました"><a href="#4-Pytorchでニューラルネットワークを構築してみました" class="headerlink" title="4.Pytorchでニューラルネットワークを構築してみました"></a>4.Pytorchでニューラルネットワークを構築してみました</h3><h3 id="5-Next"><a href="#5-Next" class="headerlink" title="5.Next"></a>5.Next</h3><ul>
 <li>Pytorchでテキストの分類を行ってみる<h3 id="6-参考文献"><a href="#6-参考文献" class="headerlink" title="6.参考文献"></a>6.参考文献</h3></li>
 </ul>
@@ -439,13 +460,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">Symbols count total: </span>
-    <span title="Symbols count total">67k</span>
+    <span title="Symbols count total">69k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">Reading time total &asymp;</span>
-    <span title="Reading time total">1:01</span>
+    <span title="Reading time total">1:03</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
