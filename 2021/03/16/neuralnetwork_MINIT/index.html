@@ -36,8 +36,9 @@
 <meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/numpy_acc_line.png">
 <meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/keras_result.png">
 <meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/keras_kaggle.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/pytorch_result.png">
 <meta property="article:published_time" content="2021-03-16T12:11:27.000Z">
-<meta property="article:modified_time" content="2021-03-28T06:30:57.601Z">
+<meta property="article:modified_time" content="2021-03-28T08:36:52.387Z">
 <meta property="article:author" content="Jorey">
 <meta property="article:tag" content="機械学習">
 <meta property="article:tag" content="ニューラルネットワーク">
@@ -203,7 +204,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-03-28 15:30:57" itemprop="dateModified" datetime="2021-03-28T15:30:57+09:00">2021-03-28</time>
+                <time title="Modified: 2021-03-28 17:36:52" itemprop="dateModified" datetime="2021-03-28T17:36:52+09:00">2021-03-28</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -228,14 +229,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>6.9k</span>
+              <span>9.4k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>6 mins.</span>
+              <span>9 mins.</span>
             </span>
 
         </div>
@@ -305,15 +306,23 @@
 </li>
 </ol>
 <h3 id="4-Pytorchでニューラルネットワークを構築してみました"><a href="#4-Pytorchでニューラルネットワークを構築してみました" class="headerlink" title="4.Pytorchでニューラルネットワークを構築してみました"></a>4.Pytorchでニューラルネットワークを構築してみました</h3><ol>
-<li>データ集をPytorch専用のTensorに変換する<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import torch</span><br><span class="line">from torch.utils.data import DataLoader</span><br><span class="line">X_train_torch &#x3D; torch.from_numpy(X_train).float()</span><br><span class="line">Y_train_torch &#x3D; torch.from_numpy(Y_train).long()</span><br><span class="line">X_val_torch &#x3D; torch.from_numpy(X_val).float()</span><br><span class="line">Y_val_torch &#x3D; torch.from_numpy(Y_val).long()</span><br></pre></td></tr></table></figure>
-<h3 id="5-Next"><a href="#5-Next" class="headerlink" title="5.Next"></a>5.Next</h3></li>
+<li>データ集をPytorch専用のTensorに変換する<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">import torch</span><br><span class="line">from torch.utils.data import DataLoader</span><br><span class="line">from torch import nn,optim</span><br><span class="line">import torch.nn.functional as F</span><br><span class="line">import torch.utils.data</span><br><span class="line">X_train_torch &#x3D; torch.from_numpy(X_train).float()</span><br><span class="line">Y_train_torch &#x3D; torch.from_numpy(Y_train).long()</span><br><span class="line">X_val_torch &#x3D; torch.from_numpy(X_val).float()</span><br><span class="line">Y_val_torch &#x3D; torch.from_numpy(Y_val).long()</span><br><span class="line">X_train_torch.T.size(0),Y_train_torch.T.size(0)</span><br><span class="line">#(41000, 41000)</span><br></pre></td></tr></table></figure></li>
+<li>Batchごとを行うため、TensorDatasetに格納します。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">train_dataset&#x3D;torch.utils.data.TensorDataset(X_train_torch.T, Y_train_torch)</span><br><span class="line">val_dataset&#x3D;torch.utils.data.TensorDataset(X_val_torch.T, Y_val_torch)</span><br><span class="line"></span><br><span class="line">train_loader &#x3D; torch.utils.data.DataLoader(train_dataset,batch_size&#x3D;1000,shuffle&#x3D;True)</span><br><span class="line">val_loader &#x3D; torch.utils.data.DataLoader(val_dataset,batch_size&#x3D;1000,shuffle&#x3D;True)</span><br></pre></td></tr></table></figure></li>
+<li>Pytorchのフォーマットに沿って、ニューラルネットワークの構築を行います。過学習を防ぐため、Dropoutを利用します。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class NN(nn.Module):</span><br><span class="line">    def __init__(self):</span><br><span class="line">        super().__init__()</span><br><span class="line">        self.layer1 &#x3D; nn.Linear(784,100)</span><br><span class="line">        self.layer2 &#x3D; nn.Linear(100,10)</span><br><span class="line">        </span><br><span class="line">        self.dropout &#x3D; nn.Dropout(p&#x3D;0.2)</span><br><span class="line">        </span><br><span class="line">    def forward(self,x):</span><br><span class="line">        x &#x3D; x.view(x.shape[0],-1)</span><br><span class="line">        </span><br><span class="line">        x &#x3D; self.dropout(F.relu(self.layer1(x)))</span><br><span class="line">        x &#x3D; F.softmax(self.layer2(x),dim&#x3D;1)</span><br><span class="line">        </span><br><span class="line">        return x</span><br></pre></td></tr></table></figure></li>
+<li>　損失関数と最適化手法を設定し、訓練プロセスを設定します。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">model &#x3D; NN()</span><br><span class="line"></span><br><span class="line">criterion &#x3D; nn.CrossEntropyLoss()</span><br><span class="line">optimizer &#x3D; optim.Adam(model.parameters(),lr&#x3D;0.001)</span><br><span class="line"></span><br><span class="line">epochs &#x3D; 100</span><br><span class="line">train_losses &#x3D; []</span><br><span class="line">test_losses &#x3D; []</span><br><span class="line">accuracy_list &#x3D; []</span><br><span class="line">print(&#39;start&#39;)</span><br><span class="line">model &#x3D; model.float()</span><br><span class="line">for e in range(epochs):</span><br><span class="line">    running_loss &#x3D; 0</span><br><span class="line">    for images,labels in train_loader:</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        </span><br><span class="line">        log_ps &#x3D; model(images)</span><br><span class="line">        loss &#x3D; criterion(log_ps,labels)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">        running_loss +&#x3D; loss.item()</span><br><span class="line">    else:</span><br><span class="line">        test_loss &#x3D; 0</span><br><span class="line">        accuracy &#x3D; 0</span><br><span class="line">        with torch.no_grad():</span><br><span class="line">            model.eval()</span><br><span class="line">            </span><br><span class="line">            for images,labels in val_loader:</span><br><span class="line">                log_ps &#x3D;model(images)</span><br><span class="line">                test_loss +&#x3D; criterion(log_ps,labels)</span><br><span class="line">                ps &#x3D; torch.exp(log_ps)</span><br><span class="line">                top_p,top_class &#x3D; ps.max(dim&#x3D;1, keepdim&#x3D;True)</span><br><span class="line"></span><br><span class="line">                equals &#x3D; top_class &#x3D;&#x3D; labels.view(*top_class.shape)</span><br><span class="line">                </span><br><span class="line">                accuracy +&#x3D; torch.mean(equals.type(torch.FloatTensor))</span><br><span class="line">                </span><br><span class="line">        model.train()</span><br><span class="line">        </span><br><span class="line">        train_losses.append(running_loss&#x2F;len(train_loader))</span><br><span class="line">        test_losses.append(test_loss&#x2F;len(val_loader))</span><br><span class="line">        accuracy_list.append(accuracy)</span><br><span class="line">                </span><br><span class="line">        print(&quot;epoch: &#123;&#125;&#x2F;&#123;&#125;.. &quot;.format(e+1, epochs),</span><br><span class="line">              &quot;train_loss: &#123;:.3f&#125;.. &quot;.format(running_loss&#x2F;len(train_loader)),</span><br><span class="line">              &quot;test_loss: &#123;:.3f&#125;.. &quot;.format(test_loss&#x2F;len(val_loader)),</span><br><span class="line">              &quot;accuracy: &#123;:.3f&#125;&quot;.format(accuracy&#x2F;len(val_loader)))      </span><br></pre></td></tr></table></figure>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/pytorch_result.png" class="" title="pytorch_result"></div></li>
+<li>可視化によって、損失と精度の推移を確認します。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">plt.plot(train_losses,label&#x3D;&#39;Training loss&#39;)</span><br><span class="line">plt.plot(test_losses,label&#x3D;&#39;Validation loss&#39;)</span><br><span class="line">plt.plot(accuracy_list,label&#x3D;&#39;Accuracy&#39;)</span><br><span class="line">plt.legend()</span><br></pre></td></tr></table></figure>
+<div style="width:100%;margin:auto"></div>
+
+</li>
 </ol>
-<ul>
+<h3 id="5-Next"><a href="#5-Next" class="headerlink" title="5.Next"></a>5.Next</h3><ul>
 <li>Pytorchでテキストの分類を行ってみる</li>
 </ul>
 <h3 id="6-参考文献"><a href="#6-参考文献" class="headerlink" title="6.参考文献"></a>6.参考文献</h3><ol>
 <li><a target="_blank" rel="noopener" href="https://keras.io/ja/">keras documents</a></li>
-<li></li>
+<li><a target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/index.html">pytorch documents</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.amazon.co.jp/%E3%82%BC%E3%83%AD%E3%81%8B%E3%82%89%E4%BD%9C%E3%82%8BDeep-Learning-%E2%80%95Python%E3%81%A7%E5%AD%A6%E3%81%B6%E3%83%87%E3%82%A3%E3%83%BC%E3%83%97%E3%83%A9%E3%83%BC%E3%83%8B%E3%83%B3%E3%82%B0%E3%81%AE%E7%90%86%E8%AB%96%E3%81%A8%E5%AE%9F%E8%A3%85-%E6%96%8E%E8%97%A4-%E5%BA%B7%E6%AF%85/dp/4873117585/ref=sr_1_1?adgrpid=103020866343&dchild=1&gclid=Cj0KCQjw0oCDBhCPARIsAII3C_EwbmbxiFhXpRe6SPmoc7pFv4BMTFtbL0VNqLMla0wervsh-BHtO-UaAkmaEALw_wcB&hvadid=448651961923&hvdev=c&hvlocphy=1009333&hvnetw=g&hvqmt=e&hvrand=13330263149548873495&hvtargid=kwd-335457286238&hydadcr=27294_11561544&jp-ad-ap=0&keywords=%E3%82%BC%E3%83%AD%E3%81%8B%E3%82%89%E4%BD%9C%E3%82%8Bdeep+learning&qid=1616920581&sr=8-1">ゼロから作るDeepLearning</a></li>
 </ol>
 
     </div>
@@ -360,8 +369,8 @@
       <i class="fa fa-chevron-left"></i> パワポを自動翻訳する
     </a></div>
       <div class="post-nav-item">
-    <a href="/Jorey-s-Blog/2021/03/24/others_%E3%82%A8%E3%83%A9%E3%83%BC%E9%9B%86/" rel="next" title="">
-       <i class="fa fa-chevron-right"></i>
+    <a href="/Jorey-s-Blog/2021/03/28/others_%E3%82%A8%E3%83%A9%E3%83%BC%E9%9B%86/" rel="next" title="エラー集">
+      エラー集 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -438,14 +447,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/Jorey-s-Blog/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/Jorey-s-Blog/categories/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -500,13 +509,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">Symbols count total: </span>
-    <span title="Symbols count total">76k</span>
+    <span title="Symbols count total">78k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">Reading time total &asymp;</span>
-    <span title="Reading time total">1:09</span>
+    <span title="Reading time total">1:11</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
