@@ -34,8 +34,10 @@
 <meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/show_labels.png">
 <meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/2%E5%B1%A4%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%A9%E3%83%AB%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF.png">
 <meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/numpy_acc_line.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/keras_result.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/keras_kaggle.png">
 <meta property="article:published_time" content="2021-03-16T12:11:27.000Z">
-<meta property="article:modified_time" content="2021-03-21T14:43:37.474Z">
+<meta property="article:modified_time" content="2021-03-28T06:30:57.601Z">
 <meta property="article:author" content="Jorey">
 <meta property="article:tag" content="機械学習">
 <meta property="article:tag" content="ニューラルネットワーク">
@@ -201,7 +203,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-03-21 23:43:37" itemprop="dateModified" datetime="2021-03-21T23:43:37+09:00">2021-03-21</time>
+                <time title="Modified: 2021-03-28 15:30:57" itemprop="dateModified" datetime="2021-03-28T15:30:57+09:00">2021-03-28</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -226,14 +228,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>5.9k</span>
+              <span>6.9k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>5 mins.</span>
+              <span>6 mins.</span>
             </span>
 
         </div>
@@ -254,7 +256,8 @@
 <li>testデータに関してはTrainデータと同様に、画像のピクセル値が格納していますが、label列がついていないので、それを識別するのは今回のタスクです。</li>
 </ul>
 </li>
-<li>training data,validate dataを用意します。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">data &#x3D; np.array(train)</span><br><span class="line">m,n &#x3D; data.shape</span><br><span class="line">np.random.shuffle(data)</span><br><span class="line"></span><br><span class="line">data_val&#x3D;data[0:1000].T</span><br><span class="line">Y_val &#x3D; data_val[0]</span><br><span class="line">X_val &#x3D; data_val[1:n]</span><br><span class="line">X_val &#x3D; X_val&#x2F;255.</span><br><span class="line">print(data_val.shape,Y_val.shape,X_val.shape)</span><br><span class="line"></span><br><span class="line">data_train &#x3D; data[1000:m].T</span><br><span class="line">Y_train &#x3D; data_train[0]</span><br><span class="line">X_train &#x3D; data_train[1:n]</span><br><span class="line">X_train &#x3D; X_train&#x2F;255.</span><br><span class="line">_,m_train &#x3D; X_train.shape</span><br><span class="line">print(data_train.shape,Y_train.shape,X_train.shape)</span><br><span class="line"></span><br><span class="line">#(785, 1000) (1000,) (784, 1000)</span><br><span class="line">(785, 41000) (41000,) (784, 41000)</span><br></pre></td></tr></table></figure>
+<li>training data,validate dataを用意します。<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">data &#x3D; np.array(train)</span><br><span class="line">m,n &#x3D; data.shape</span><br><span class="line">np.random.shuffle(data)</span><br><span class="line"></span><br><span class="line">data_val&#x3D;data[0:1000].T</span><br><span class="line">Y_val &#x3D; data_val[0]</span><br><span class="line">X_val &#x3D; data_val[1:n]</span><br><span class="line">X_val &#x3D; X_val&#x2F;255.</span><br><span class="line">print(data_val.shape,Y_val.shape,X_val.shape)</span><br><span class="line"></span><br><span class="line">data_train &#x3D; data[1000:m].T</span><br><span class="line">Y_train &#x3D; data_train[0]</span><br><span class="line">X_train &#x3D; data_train[1:n]</span><br><span class="line">X_train &#x3D; X_train&#x2F;255.</span><br><span class="line">_,m_train &#x3D; X_train.shape</span><br><span class="line">print(data_train.shape,Y_train.shape,X_train.shape)</span><br><span class="line"></span><br><span class="line">#(785, 1000) (1000,) (784, 1000)</span><br><span class="line">(785, 41000) (41000,) (784, 41000)</span><br></pre></td></tr></table></figure>
 <h3 id="1-EDA"><a href="#1-EDA" class="headerlink" title="1.EDA"></a>1.EDA</h3>まずkaggleからダウンロードしたtrain.csvとtest.csvを読み込んで、データの中身をいろいろ確認してみました。</li>
 </ul>
 <ol start="0">
@@ -291,16 +294,27 @@
 <li>accuracyの推移値<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">x_axis &#x3D; [i for i in range(len(accuracy_))]</span><br><span class="line">y_axis &#x3D; accuracy_</span><br><span class="line">line1&#x3D;(</span><br><span class="line">    Line()</span><br><span class="line">    .add_xaxis(x_axis)  </span><br><span class="line">    .add_yaxis(&#39;accuracy&#39;,y_axis)</span><br><span class="line">    .set_global_opts(title_opts&#x3D;opts.TitleOpts(title&#x3D;&#39;accuracy&#39;),</span><br><span class="line">                     xaxis_opts&#x3D;opts.AxisOpts(axislabel_opts&#x3D;opts.LabelOpts(font_size&#x3D;20)))</span><br><span class="line">)</span><br><span class="line">line1.render_notebook()</span><br></pre></td></tr></table></figure>
 <div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/numpy_acc_line.png" class="" title="numpy_acc_line"></div>
 
-
-
-
-
+</li>
+</ol>
+<h3 id="3-Kerasでニューラルネットワークを構築てみました"><a href="#3-Kerasでニューラルネットワークを構築てみました" class="headerlink" title="3.Kerasでニューラルネットワークを構築てみました"></a>3.Kerasでニューラルネットワークを構築てみました</h3><ol>
+<li>考え方は基本Numpyでの構築と同様ですが、Sequentialモデルをもとに、.add()でレイヤーを積み重ねて、.compile()で訓練プロセスを設定します。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">model&#x3D;Sequential() #</span><br><span class="line">model.add(Dense(100,activation &#x3D; &#39;relu&#39;))</span><br><span class="line">model.add(Dense(10,activation &#x3D; &#39;softmax&#39;))</span><br><span class="line"></span><br><span class="line">model.compile(optimizer&#x3D;&#39;adam&#39;,</span><br><span class="line">             loss &#x3D;&#39;sparse_categorical_crossentropy&#39;,</span><br><span class="line">             metrics &#x3D;&#39;acc&#39;)</span><br><span class="line">model.fit(X_train.T,Y_train,epochs&#x3D;60,batch_size&#x3D;512)</span><br></pre></td></tr></table></figure>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/keras_result.png" class="" title="keras_result"></div></li>
+<li>testデータの予測し、Kaggleに提出します。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result &#x3D; model.predict(np.array(test))</span><br><span class="line">result_&#x3D;pd.DataFrame(results,index&#x3D;list(range(1,len(results)+1))).reset_index().rename(columns &#x3D; &#123;&#39;index&#39;:&#39;ImageId&#39;,0:&#39;Label&#39;&#125;)</span><br><span class="line">result_.to_csv(&#39;Digit Recognizer_version3(keras).csv&#39;,index&#x3D;False)</span><br></pre></td></tr></table></figure>
+<div style="width:100%;margin:auto"><img src="/Jorey-s-Blog/2021/03/16/neuralnetwork_MINIT/keras_kaggle.png" class="" title="keras_kaggle"></div>
 
 </li>
 </ol>
-<h3 id="3-Kerasでニューラルネットワークを構築てみました"><a href="#3-Kerasでニューラルネットワークを構築てみました" class="headerlink" title="3.Kerasでニューラルネットワークを構築てみました"></a>3.Kerasでニューラルネットワークを構築てみました</h3><h3 id="4-Pytorchでニューラルネットワークを構築してみました"><a href="#4-Pytorchでニューラルネットワークを構築してみました" class="headerlink" title="4.Pytorchでニューラルネットワークを構築してみました"></a>4.Pytorchでニューラルネットワークを構築してみました</h3><h3 id="5-Next"><a href="#5-Next" class="headerlink" title="5.Next"></a>5.Next</h3><ul>
-<li>Pytorchでテキストの分類を行ってみる<h3 id="6-参考文献"><a href="#6-参考文献" class="headerlink" title="6.参考文献"></a>6.参考文献</h3></li>
+<h3 id="4-Pytorchでニューラルネットワークを構築してみました"><a href="#4-Pytorchでニューラルネットワークを構築してみました" class="headerlink" title="4.Pytorchでニューラルネットワークを構築してみました"></a>4.Pytorchでニューラルネットワークを構築してみました</h3><ol>
+<li>データ集をPytorch専用のTensorに変換する<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">import torch</span><br><span class="line">from torch.utils.data import DataLoader</span><br><span class="line">X_train_torch &#x3D; torch.from_numpy(X_train).float()</span><br><span class="line">Y_train_torch &#x3D; torch.from_numpy(Y_train).long()</span><br><span class="line">X_val_torch &#x3D; torch.from_numpy(X_val).float()</span><br><span class="line">Y_val_torch &#x3D; torch.from_numpy(Y_val).long()</span><br></pre></td></tr></table></figure>
+<h3 id="5-Next"><a href="#5-Next" class="headerlink" title="5.Next"></a>5.Next</h3></li>
+</ol>
+<ul>
+<li>Pytorchでテキストの分類を行ってみる</li>
 </ul>
+<h3 id="6-参考文献"><a href="#6-参考文献" class="headerlink" title="6.参考文献"></a>6.参考文献</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://keras.io/ja/">keras documents</a></li>
+<li></li>
+</ol>
 
     </div>
 
@@ -345,7 +359,10 @@
     <a href="/Jorey-s-Blog/2021/02/10/%E3%83%91%E3%83%AF%E3%83%9D%E3%82%92%E8%87%AA%E5%8B%95%E9%80%9A%E8%A8%B3%E3%81%99%E3%82%8B/" rel="prev" title="パワポを自動翻訳する">
       <i class="fa fa-chevron-left"></i> パワポを自動翻訳する
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/Jorey-s-Blog/2021/03/24/others_%E3%82%A8%E3%83%A9%E3%83%BC%E9%9B%86/" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -421,7 +438,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/Jorey-s-Blog/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -483,13 +500,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">Symbols count total: </span>
-    <span title="Symbols count total">72k</span>
+    <span title="Symbols count total">76k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">Reading time total &asymp;</span>
-    <span title="Reading time total">1:06</span>
+    <span title="Reading time total">1:09</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
   </div>

@@ -33,8 +33,9 @@
 <meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/datas_tmp.png">
 <meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/%E5%9B%9B-1.png">
 <meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/%E5%9B%9B-2.png">
+<meta property="og:image" content="https://github.com/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/%E4%BA%94_1.png">
 <meta property="article:published_time" content="2021-01-25T08:44:09.000Z">
-<meta property="article:modified_time" content="2021-02-03T05:55:45.555Z">
+<meta property="article:modified_time" content="2021-03-22T03:11:08.770Z">
 <meta property="article:author" content="Jorey">
 <meta property="article:tag" content="Excel">
 <meta property="article:tag" content="自動化">
@@ -198,7 +199,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-02-03 14:55:45" itemprop="dateModified" datetime="2021-02-03T14:55:45+09:00">2021-02-03</time>
+                <time title="Modified: 2021-03-22 12:11:08" itemprop="dateModified" datetime="2021-03-22T12:11:08+09:00">2021-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -223,14 +224,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>4.7k</span>
+              <span>6.3k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">Reading time &asymp;</span>
-              <span>4 mins.</span>
+              <span>6 mins.</span>
             </span>
 
         </div>
@@ -397,6 +398,54 @@
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import random</span><br><span class="line">num&#x3D;92</span><br><span class="line">list_not&#x3D;[0]*num</span><br><span class="line">num_hot&#x3D;10</span><br><span class="line">list_hot&#x3D;[1]*num_hot</span><br><span class="line"></span><br><span class="line">list_all&#x3D;list_not+list_hot</span><br><span class="line">random.shuffle(list_all)</span><br><span class="line"></span><br><span class="line">ddf[&#39;HOT&#39;]&#x3D;list_all</span><br><span class="line">ddf.loc[ddf[&#39;HOT&#39;]&#x3D;&#x3D;1,&#39;NOT&#39;]&#x3D;0</span><br><span class="line">ddf.loc[ddf[&#39;HOT&#39;]&#x3D;&#x3D;0,&#39;NOT&#39;]&#x3D;1</span><br></pre></td></tr></table></figure>
 <div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/%E5%9B%9B-2.png" class="" title="四-2"></div>
+
+<h2 id="五、辞書によるリスト要素の重複削除"><a href="#五、辞書によるリスト要素の重複削除" class="headerlink" title="五、辞書によるリスト要素の重複削除"></a>五、辞書によるリスト要素の重複削除</h2><div style="width:80%;margin:auto"><img src="/Jorey-s-Blog/2021/01/25/Python%E3%81%AB%E3%82%88%E3%82%8B%E8%87%AA%E5%8B%95%E5%8C%96/%E4%BA%94_1.png" class="" title="五_1"></div>
+setを使用するには、hashableの対象ではないと効かないので、そのままsetを使用することで、エラーが出てしまいます。
+
+<ol>
+<li>回答①<ul>
+<li>dict内すべての要素を一度重複があるかどうかを判断してリストに格納する方法です。</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">result &#x3D; []</span><br><span class="line">def unduplicate(result,data):</span><br><span class="line">    if data not in result:</span><br><span class="line">        result &#x3D; result+[data]</span><br><span class="line">    return result</span><br><span class="line">for i in test:</span><br><span class="line">    result &#x3D; unduplicate(result,i)</span><br><span class="line">result</span><br><span class="line">#[&#123;&#39;a&#39;: 1&#125;, &#123;&#39;a&#39;: 3&#125;, &#123;&#39;b&#39;: 2&#125;]</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>回答②<ul>
+<li>回答①と本質的に変わらないのですが、reduceを使うことで、やや効率よくなる方法です。</li>
+<li><a target="_blank" rel="noopener" href="https://techacademy.jp/magazine/18844">reduceの基本構文</a><ul>
+<li>reduce(function, iterable, initializer)</li>
+<li>第1引数には2つの引数を取るfunctionを指定する必要があります。(必須)</li>
+<li>第2引数にはiterableを指定する必要があります。(必須)</li>
+<li>第3引数にはオプションですが、指定された場合、iterableの先頭に置かれ、iterableが空の場合のデフォルト値になります。また第1引数にはfunctionの代わりにラムダ式を使用する事もできます。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">from functools import reduce </span><br><span class="line">def delete_duplicate(data):</span><br><span class="line">    func &#x3D; lambda x,y :x +[y] if y not in x else x</span><br><span class="line">    data &#x3D; reduce(func,[[],] +data)</span><br><span class="line">    return data</span><br><span class="line">delete_duplicate(test)</span><br><span class="line">#[&#123;&#39;a&#39;: 1&#125;, &#123;&#39;a&#39;: 3&#125;, &#123;&#39;b&#39;: 2&#125;]</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>回答③<ul>
+<li>dictを無理矢理に文字列に変更し、set関数を使って重複削除を行ったら、eval関数を使ってdictに戻させる方法です。</li>
+<li><a target="_blank" rel="noopener" href="https://techacademy.jp/magazine/40662#1">eval関数の基本構文</a><ul>
+<li>eval(“式”, globals=None, locals=None)</li>
+<li>第1引数の”式”には、ダブルクオーテーションで囲った式を代入します。</li>
+<li>第2引数と第3引数には、任意でそれぞれグローバル、ローカルの「名前空間」を指定しますが、これらはeval関数の基本的な使い方については理解するにはそれほど重要ではないので、詳しい説明はここでは省略します。</li>
+<li>eval関数の返り値としては、第1引数で指定した式の値が返されます。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">def delete_duplicate(data):</span><br><span class="line">    dict_ed &#x3D; set([str(i) for i in data])</span><br><span class="line">    data &#x3D; [eval(i) for i in dict_ed]</span><br><span class="line">    return data</span><br><span class="line">delete_duplicate(test)</span><br><span class="line">#[&#123;&#39;b&#39;: 2&#125;, &#123;&#39;a&#39;: 3&#125;, &#123;&#39;a&#39;: 1&#125;]</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>回答④ ★★★☆☆<ul>
+<li>要素であるdictをtuple形式に変更し、setを使って重複削除し、dict関数を使ってtuple形式をdict形式に戻させる方法です。</li>
+<li>この方法は2重dictの要素が入ってあれば適用しないので、その場合回答③を使えればと思います。</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data &#x3D; [dict(t) for t in set([tuple(i.items()) for i in test])]</span><br><span class="line">data</span><br><span class="line">#[&#123;&#39;b&#39;: 2&#125;, &#123;&#39;a&#39;: 1&#125;, &#123;&#39;a&#39;: 3&#125;]</span><br></pre></td></tr></table></figure>
+
     </div>
 
     
@@ -501,7 +550,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E8%A4%87%E6%95%B0%E3%81%AEcsv%E3%82%92Excel%E3%81%AESheet%E3%81%AB%E4%BF%9D%E5%AD%98%E3%81%99%E3%82%8B"><span class="nav-text">一、複数のcsvをExcelのSheetに保存する</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%9B%AE%E7%9A%84"><span class="nav-text">1.目的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BA%8B%E5%89%8D%E8%AA%AC%E6%98%8E"><span class="nav-text">2.事前説明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%A7%A3%E5%87%8D"><span class="nav-text">3.解凍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-csv%E3%81%AE%E6%93%8D%E4%BD%9C"><span class="nav-text">4.csvの操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-excel%E3%81%AB%E6%9B%B8%E3%81%8D%E8%BE%BC%E3%82%80"><span class="nav-text">5.excelに書き込む</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%AE%8B%E3%82%8A%E8%AA%B2%E9%A1%8C"><span class="nav-text">6.残り課題</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%812%E3%81%A4%E3%81%AE%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AB%E5%B7%AE%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%9F%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E6%96%B0%E3%81%97%E3%81%84%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AB%E3%82%B3%E3%83%94%E3%83%BC%E3%81%99%E3%82%8B"><span class="nav-text">二、2つのフォルダに差になったファイルを新しいフォルダにコピーする</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B7%AE%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%9F%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E6%8E%A2%E3%81%97%E5%87%BA%E3%81%99"><span class="nav-text">1.差になったファイルを探し出す</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%96%B0%E3%81%97%E3%81%84%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AB%E3%82%B3%E3%83%94%E3%83%BC"><span class="nav-text">2.新しいフォルダにコピー</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E5%86%85%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E4%B8%80%E6%8B%AC%E3%81%AB%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF%E3%80%81%E7%89%B9%E5%AE%9A%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E3%81%BF%E7%B5%90%E5%90%88%E3%81%99%E3%82%8B"><span class="nav-text">三、フォルダ内のファイルを一括に読み込み、特定のファイルのみ結合する</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E4%B8%80%E6%8B%AC%E3%81%AB%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF"><span class="nav-text">1.ファイルを一括に読み込み</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%89%B9%E5%AE%9A%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E3%81%BF%E7%B5%90%E5%90%88"><span class="nav-text">2.特定のファイルのみ結合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E3%83%95%E3%83%A9%E3%82%B0%E3%81%A4%E3%81%91"><span class="nav-text">四、フラグつけ</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E8%A4%87%E6%95%B0%E3%81%AEcsv%E3%82%92Excel%E3%81%AESheet%E3%81%AB%E4%BF%9D%E5%AD%98%E3%81%99%E3%82%8B"><span class="nav-text">一、複数のcsvをExcelのSheetに保存する</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%9B%AE%E7%9A%84"><span class="nav-text">1.目的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BA%8B%E5%89%8D%E8%AA%AC%E6%98%8E"><span class="nav-text">2.事前説明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%A7%A3%E5%87%8D"><span class="nav-text">3.解凍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-csv%E3%81%AE%E6%93%8D%E4%BD%9C"><span class="nav-text">4.csvの操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-excel%E3%81%AB%E6%9B%B8%E3%81%8D%E8%BE%BC%E3%82%80"><span class="nav-text">5.excelに書き込む</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%AE%8B%E3%82%8A%E8%AA%B2%E9%A1%8C"><span class="nav-text">6.残り課題</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%812%E3%81%A4%E3%81%AE%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AB%E5%B7%AE%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%9F%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E6%96%B0%E3%81%97%E3%81%84%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AB%E3%82%B3%E3%83%94%E3%83%BC%E3%81%99%E3%82%8B"><span class="nav-text">二、2つのフォルダに差になったファイルを新しいフォルダにコピーする</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B7%AE%E3%81%AB%E3%81%AA%E3%81%A3%E3%81%9F%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E6%8E%A2%E3%81%97%E5%87%BA%E3%81%99"><span class="nav-text">1.差になったファイルを探し出す</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%96%B0%E3%81%97%E3%81%84%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AB%E3%82%B3%E3%83%94%E3%83%BC"><span class="nav-text">2.新しいフォルダにコピー</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E5%86%85%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E4%B8%80%E6%8B%AC%E3%81%AB%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF%E3%80%81%E7%89%B9%E5%AE%9A%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E3%81%BF%E7%B5%90%E5%90%88%E3%81%99%E3%82%8B"><span class="nav-text">三、フォルダ内のファイルを一括に読み込み、特定のファイルのみ結合する</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%82%92%E4%B8%80%E6%8B%AC%E3%81%AB%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF"><span class="nav-text">1.ファイルを一括に読み込み</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%89%B9%E5%AE%9A%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E3%81%BF%E7%B5%90%E5%90%88"><span class="nav-text">2.特定のファイルのみ結合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E3%83%95%E3%83%A9%E3%82%B0%E3%81%A4%E3%81%91"><span class="nav-text">四、フラグつけ</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%BE%9E%E6%9B%B8%E3%81%AB%E3%82%88%E3%82%8B%E3%83%AA%E3%82%B9%E3%83%88%E8%A6%81%E7%B4%A0%E3%81%AE%E9%87%8D%E8%A4%87%E5%89%8A%E9%99%A4"><span class="nav-text">五、辞書によるリスト要素の重複削除</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -517,7 +566,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/Jorey-s-Blog/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -579,13 +628,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">Symbols count total: </span>
-    <span title="Symbols count total">72k</span>
+    <span title="Symbols count total">76k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">Reading time total &asymp;</span>
-    <span title="Reading time total">1:06</span>
+    <span title="Reading time total">1:09</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
